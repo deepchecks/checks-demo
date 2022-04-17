@@ -6,9 +6,16 @@ from PIL import Image
 import streamlit as st
 import streamlit.components.v1 as components
 
+from analytics import inject_ga
 from datasets import get_dataset_options
 from checks import get_checks_options
 from encoder import AppEncoder
+from dotenv import load_dotenv
+
+
+# Add google analytics
+load_dotenv()
+inject_ga()
 
 TEMPLATE_WRAPPER = """
 <div style="height:{height}px;overflow-y:auto;position:relative;">
@@ -17,8 +24,10 @@ TEMPLATE_WRAPPER = """
 """
 
 icon = Image.open(Path(__file__).parent.parent / 'resources' / 'favicon.ico')
+logo = Image.open(Path(__file__).parent.parent / 'resources' / 'deepchecks_logo.png')
 
-st.set_page_config(page_title='Deepchecks sandbox', page_icon=icon, layout='wide')
+st.set_page_config(page_title='Deepchecks Demo', page_icon=icon, layout='wide')
+st.sidebar.image(logo, use_column_width=True)
 col1, col2 = st.columns(2)
 
 with st.spinner('Loading datasets...'):
