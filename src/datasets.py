@@ -1,6 +1,5 @@
-from typing import TypedDict, Any, Dict
+from typing import TypedDict, Any
 
-import pandas as pd
 import streamlit as st
 
 from deepchecks.tabular import Dataset

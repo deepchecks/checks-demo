@@ -3,11 +3,10 @@ import math
 import numpy as np
 import streamlit as st
 from deepchecks.tabular import Dataset
-from deepchecks.tabular import Suite
 from deepchecks.tabular.checks import TrainTestLabelDrift
 
-from src.datasets import DatasetOption
-from src.utils import insert_categorical_drift, insert_numerical_drift
+from datasets import DatasetOption
+from utils import insert_categorical_drift, insert_numerical_drift
 
 
 def run(dataset_option: DatasetOption):

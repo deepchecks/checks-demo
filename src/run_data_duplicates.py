@@ -1,13 +1,11 @@
-import random
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 from deepchecks.tabular import Dataset
-from deepchecks.tabular import Suite
-from deepchecks.tabular.checks import StringMismatch, DataDuplicates
+from deepchecks.tabular.checks import DataDuplicates
 
-from src.datasets import DatasetOption
+from datasets import DatasetOption
 
 
 def run(dataset_option: DatasetOption):

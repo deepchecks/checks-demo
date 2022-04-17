@@ -5,8 +5,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from datasets import get_dataset_options
-from src.checks.checks import get_checks_options
-from src.encoder import AppEncoder
+from checks import get_checks_options
+from encoder import AppEncoder
 
 TEMPLATE_WRAPPER = """
 <div style="height:{height}px;overflow-y:auto;position:relative;">
@@ -14,7 +14,7 @@ TEMPLATE_WRAPPER = """
 </div>
 """
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title='Deepchecks sandbox', layout='wide')
 col1, col2 = st.columns(2)
 
 with st.spinner('Loading datasets...'):
