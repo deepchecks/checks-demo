@@ -1,4 +1,4 @@
-# Deepchecks Demo
+# Deepchecks's Checks Demo
 
 This project is a demo to quickly display the usage of a few checks from the [Deepchecks](https://github.com/deepchecks/deepchecks) 
 library.
