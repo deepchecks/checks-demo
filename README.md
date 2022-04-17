@@ -6,8 +6,8 @@ library.
 ## Running locally
 The project is based on [streamlit](https://streamlit.io/)
 ```
-git clone https://github.com/deepchecks/sandbox.git
-cd sandbox
+git clone https://github.com/deepchecks/checks-demo.git
+cd checks-demo
 pip install -r requirements.txt
 streamlit run src/streamlit_app.py
 ```
