@@ -1,6 +1,6 @@
-# Deepchecks Sandbox
+# Deepchecks Demo
 
-This project is a sandbox to quickly display the usage of a few checks from the [Deepchecks](https://github.com/deepchecks/deepchecks) 
+This project is a demo to quickly display the usage of a few checks from the [Deepchecks](https://github.com/deepchecks/deepchecks) 
 library.
 
 ## Running locally
