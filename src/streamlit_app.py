@@ -1,5 +1,7 @@
 import io
 import json
+from pathlib import Path
+from PIL import Image
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -14,7 +16,9 @@ TEMPLATE_WRAPPER = """
 </div>
 """
 
-st.set_page_config(page_title='Deepchecks sandbox', layout='wide')
+icon = Image.open(Path(__file__).parent.parent / 'resources' / 'favicon.ico')
+
+st.set_page_config(page_title='Deepchecks sandbox', page_icon=icon, layout='wide')
 col1, col2 = st.columns(2)
 
 with st.spinner('Loading datasets...'):
