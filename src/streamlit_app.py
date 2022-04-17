@@ -53,7 +53,7 @@ with col1:
         st.code(check['snippet'], language='python')
 
     if result_html:
-        height_px = 1000
+        height_px = 800
         html = TEMPLATE_WRAPPER.format(body=result_html, height=height_px)
         components.html(html, height=height_px)
 
