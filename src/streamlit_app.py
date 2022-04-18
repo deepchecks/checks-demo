@@ -1,6 +1,8 @@
 import io
 import json
 from pathlib import Path
+from typing import Sequence
+
 from PIL import Image
 
 import streamlit as st
@@ -62,7 +64,7 @@ with col1:
             string_io = io.StringIO()
             check_result.save_as_html(string_io)
             result_html = string_io.getvalue()
-            result_value = json.dumps(check_result.value, indent=4, sort_keys=False, cls=AppEncoder)
+            result_value = check_result.value
 
     if snippet:
         # st.subheader(f'Run Check {check_name}')
@@ -73,9 +75,14 @@ with col1:
         html = TEMPLATE_WRAPPER.format(body=result_html, height=height_px)
         components.html(html, height=height_px)
 
-    if result_value:
+    if result_value is not None:
         st.code('print(result.value)', language='python')
-        st.json(result_value)
+        # If the result value is simple type (e.g. int, float, str) it can't be displayed as json
+        if isinstance(result_value, (dict, Sequence)):
+            result_value = json.dumps(result_value, indent=4, sort_keys=False, cls=AppEncoder)
+            st.json(result_value)
+        else:
+            st.code(str(result_value), language='python')
 
 with col2:
     st.subheader(f'Check {check_class.__name__} docstring')
