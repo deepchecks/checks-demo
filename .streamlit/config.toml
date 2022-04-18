@@ -1,0 +1,3 @@
+# Prevents dark theme from being applied to Streamlit
+[theme]
+base="light"
