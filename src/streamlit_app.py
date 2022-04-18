@@ -34,18 +34,20 @@ with st.spinner('Loading datasets...'):
     datasets = get_dataset_options()
 
 checks = get_checks_options()
+name_to_class = {check_key.name(): check_key for check_key in checks.keys()}
 
 # First select a dataset and check
 dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
-check_name = st.sidebar.selectbox('Select a check', checks.keys())
+check_name = st.sidebar.selectbox('Select a check', name_to_class.keys())
 
 dataset = datasets[dataset_name]
-check = checks[check_name]
+check_class = name_to_class[check_name]
+check_run = checks[check_class]
 
 # Run the check
 with col1:
     with st.spinner('Running check'):
-        check_result = check['run'](dataset)
+        check_result, snippet = check_run(dataset)
         if isinstance(check_result, str):
             with col1:
                 st.error(check_result)
@@ -57,9 +59,8 @@ with col1:
             result_html = string_io.getvalue()
             result_value = json.dumps(check_result.value, indent=4, sort_keys=False, cls=AppEncoder)
 
-    if check['snippet']:
-        st.subheader('Run')
-        st.code(check['snippet'], language='python')
+    # st.subheader(f'Run Check {check_name}')
+    st.code(snippet, language='python')
 
     if result_html:
         height_px = 800
@@ -67,10 +68,9 @@ with col1:
         components.html(html, height=height_px)
 
     if result_value:
-        st.subheader('Result Value')
+        st.code('print(result.value)', language='python')
         st.json(result_value)
 
 with col2:
-    if check['docstring']:
-        st.subheader('Docstring')
-        st.text(check['docstring'])
+    st.subheader(f'Check {check_class.__name__} docstring')
+    st.text(check_class.__doc__)

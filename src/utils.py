@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from deepchecks import BaseCheck, TrainTestBaseCheck
 
 
 def insert_categorical_drift(column: pd.Series, percent, category):
@@ -22,3 +23,23 @@ def insert_categorical_drift(column: pd.Series, percent, category):
 
 def insert_numerical_drift(column: pd.Series, mean, std):
     return column + np.random.normal(mean, std, size=(column.shape[0])) * np.average(column)
+
+
+def build_snippet(check: BaseCheck,
+                  properties: dict = None,
+                  model: bool = False,
+                  condition_name: str = None,
+                  condition_params: dict = None):
+    check_name = check.__class__.__name__
+    arguments = f'train=train_dataset, test=test_dataset' if isinstance(check, TrainTestBaseCheck) else 'train_dataset'
+    if model:
+        arguments += f', model=model'
+    properties_string = ', '.join([f'{k}={v}' for k, v in properties.items()]) if properties else ''
+    condition_params_string = ', '.join([f'{k}={v}' for k, v in condition_params.items()]) if condition_params else ''
+    condition_string = f'.{condition_name}({condition_params_string})' if condition_name else ''
+    snippet = (f'from deepchecks.tabular.checks import {check_name}\n'
+               f'check = {check_name}({properties_string}){condition_string}\n'
+               f'result = check.run({arguments})\n'
+               'result.show()')
+
+    return snippet

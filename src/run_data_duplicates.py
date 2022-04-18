@@ -6,6 +6,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import DataDuplicates
 
 from datasets import DatasetOption
+from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption):
@@ -18,7 +19,9 @@ def run(dataset_option: DatasetOption):
         new_data = insert_duplicates(new_data)
 
     check = DataDuplicates().add_condition_ratio_not_greater_than(0.1)
-    return check.run(dataset.copy(new_data))
+    snippet = build_snippet(check, condition_name='add_condition_ratio_not_greater_than',
+                            condition_params={'max_ratio': 0.1})
+    return check.run(dataset.copy(new_data)), snippet
 
 
 def insert_duplicates(new_data):

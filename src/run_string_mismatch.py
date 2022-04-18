@@ -7,6 +7,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import StringMismatch
 
 from datasets import DatasetOption
+from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption):
@@ -14,16 +15,19 @@ def run(dataset_option: DatasetOption):
     new_data = dataset.data.copy()
 
     if not dataset.cat_features:
-        return 'No categorical features found in dataset, try another dataset'
+        return 'No categorical features found in dataset, try another dataset', ''
     # Show column selector
+    st.sidebar.subheader(f'Check Parameters')
     column: str = st.sidebar.selectbox('Select a column', dataset.cat_features)
     st.sidebar.subheader(f'Manipulate column "{column}"')
 
     if st.sidebar.checkbox('Insert variants', value=True):
         new_data[column] = insert_variants(new_data[column])
 
-    check = StringMismatch().add_condition_ratio_variants_not_greater_than()
-    return check.run(dataset.copy(new_data))
+    check = StringMismatch(columns=[column]).add_condition_ratio_variants_not_greater_than()
+    snippet = build_snippet(check, condition_name='add_condition_ratio_variants_not_greater_than',
+                            properties={'columns': f'["{column}"]'})
+    return check.run(dataset.copy(new_data)), snippet
 
 
 def insert_variants(column: pd.Series):

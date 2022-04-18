@@ -7,13 +7,14 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestFeatureDrift
 
 from datasets import DatasetOption
-from utils import insert_categorical_drift, insert_numerical_drift
+from utils import insert_categorical_drift, insert_numerical_drift, build_snippet
 
 
 def run(dataset_option: DatasetOption):
     dataset: Dataset = dataset_option['test']
     new_data = dataset.data.copy()
     # Show column selector
+    st.sidebar.subheader(f'Check Parameters')
     columns = dataset.numerical_features + dataset.cat_features
     column: str = st.sidebar.selectbox('Select a column', columns)
 
@@ -38,4 +39,7 @@ def run(dataset_option: DatasetOption):
             new_data[column] = insert_categorical_drift(new_data[column], percent_in_data, category_to_drift)
 
     check = TrainTestFeatureDrift(columns=[column]).add_condition_drift_score_not_greater_than()
-    return check.run(dataset_option['train'], dataset.copy(new_data))
+    snippet = build_snippet(check, properties={'columns': f'["{column}"]'},
+                            condition_name='add_condition_drift_score_not_greater_than')
+
+    return check.run(dataset_option['train'], dataset.copy(new_data)), snippet
