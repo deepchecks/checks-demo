@@ -31,7 +31,7 @@ TEMPLATE_WRAPPER = """
 """
 
 icon = Image.open(Path(__file__).parent.parent / 'resources' / 'favicon.ico')
-logo = Image.open(Path(__file__).parent.parent / 'resources' / 'deepchecks_logo.png')
+logo = open(Path(__file__).parent.parent / 'resources' / 'deepchecks_logo.svg').read()
 
 st.set_page_config(page_title='Deepchecks Demo', page_icon=icon, layout='wide')
 st.sidebar.image(logo, use_column_width=True)
