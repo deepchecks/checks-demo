@@ -38,3 +38,4 @@ def inject_ga():
         html = str(soup)
         new_html = html.replace('<head>', '<head>\n' + GA_JS)
         index_path.write_text(new_html)
+        print('Google Analytics injected')
