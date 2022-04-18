@@ -31,7 +31,7 @@ def build_snippet(check: BaseCheck,
                   condition_name: str = None,
                   condition_params: dict = None):
     check_name = check.__class__.__name__
-    arguments = f'train=train_dataset, test=test_dataset' if isinstance(check, TrainTestBaseCheck) else 'train_dataset'
+    arguments = f'train=train_dataset, test=test_dataset' if isinstance(check, TrainTestBaseCheck) else 'dataset'
     if model:
         arguments += f', model=model'
     properties_string = ', '.join([f'{k}={v}' for k, v in properties.items()]) if properties else ''

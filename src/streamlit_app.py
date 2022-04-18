@@ -19,6 +19,11 @@ inject_ga()
 
 TEMPLATE_WRAPPER = """
 <div style="height:{height}px;overflow-y:auto;position:relative;">
+    <style>
+        table, th, td {{
+            border: 1px solid;
+        }}
+    </style>
     {body}
 </div>
 """
@@ -59,8 +64,9 @@ with col1:
             result_html = string_io.getvalue()
             result_value = json.dumps(check_result.value, indent=4, sort_keys=False, cls=AppEncoder)
 
-    # st.subheader(f'Run Check {check_name}')
-    st.code(snippet, language='python')
+    if snippet:
+        # st.subheader(f'Run Check {check_name}')
+        st.code(snippet, language='python')
 
     if result_html:
         height_px = 800
