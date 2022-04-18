@@ -19,4 +19,5 @@ def run(dataset_option: DatasetOption):
     check = SegmentPerformance(feature_1=column_1, feature_2=column_2)
     snippet = build_snippet(check, properties={'feature_1': f'"{column_1}"', 'feature_2': f'"{column_2}"'},
                             model=True)
-    return check.run(dataset_option['test'], model=dataset_option['model']), snippet
+    return check.run(dataset_option['test'], model=dataset_option['model'],
+                     features_importance=dataset_option['features_importance']), snippet
