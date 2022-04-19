@@ -1,3 +1,4 @@
+import enum
 from json import JSONEncoder
 
 import numpy as np
@@ -10,4 +11,6 @@ class AppEncoder(JSONEncoder):
             return obj.tolist()
         if isinstance(obj, pd.DataFrame):
             return obj.to_json(orient='records')
+        if isinstance(obj, enum.Enum):
+            return obj.value
         return JSONEncoder.default(self, obj)
