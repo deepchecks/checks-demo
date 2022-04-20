@@ -11,3 +11,6 @@ cd checks-demo
 pip install -r requirements.txt
 streamlit run src/streamlit_app.py
 ```
+
+## Debugging
+In order to debug you can run the streamlit using the `bootstrap.py` file in your IDE. This will enable you to run in debug mode inside your IDE
