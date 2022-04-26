@@ -7,7 +7,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import StringMismatch
 
 from datasets import DatasetOption
-from utils import build_snippet
+from utils import build_snippet, add_download_button
 
 
 def run(dataset_option: DatasetOption):
@@ -25,9 +25,12 @@ def run(dataset_option: DatasetOption):
         new_data[column] = insert_variants(new_data[column])
 
     check = StringMismatch(columns=[column]).add_condition_ratio_variants_not_greater_than()
-    snippet = build_snippet(check, condition_name='add_condition_ratio_variants_not_greater_than',
-                            properties={'columns': f'["{column}"]'})
-    return check.run(dataset.copy(new_data)), snippet
+    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than',
+                            properties={'columns': [column]})
+    dataset = dataset.copy(new_data)
+    add_download_button(dataset)
+
+    return check.run(dataset), snippet
 
 
 def insert_variants(column: pd.Series):
