@@ -30,6 +30,11 @@ def get_checks_options():
     }
 
 
+def update_query_param():
+    # Set in the query params the selected check
+    st.experimental_set_query_params(check=st.session_state.check_select)
+
+
 def show_checks_page():
     TEMPLATE_WRAPPER = """
     <div style="height:{height}px;overflow-y:auto;position:relative;">
@@ -43,14 +48,32 @@ def show_checks_page():
         datasets = get_dataset_options()
 
     checks = get_checks_options()
+    # Translate check classes to names
     name_to_class = {check_key.name(): check_key for check_key in checks.keys()}
+    # Add default option of no check selected
+    NO_CHECK_SELECTED = 'No check selected'
+    check_options_names = [NO_CHECK_SELECTED] + list(name_to_class.keys())
 
-    # First select a dataset and check
+    query_params = st.experimental_get_query_params()
+    # Get selected check from query params if exists
+    if 'check' in query_params:
+        start_check = query_params['check'][0]
+    # Set default query params if not exists
+    else:
+        st.experimental_set_query_params(check=NO_CHECK_SELECTED)
+        start_check = NO_CHECK_SELECTED
+
+    # select a dataset and check
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
-    check_name = st.sidebar.selectbox('Select a check', name_to_class.keys())
+    selected_check = st.sidebar.selectbox('Select a check', check_options_names, key='check_select',
+                                          index=check_options_names.index(start_check), on_change=update_query_param)
+
+    if selected_check == NO_CHECK_SELECTED:
+        st.title('Select check to start')
+        return
 
     dataset = datasets[dataset_name]
-    check_class = name_to_class[check_name]
+    check_class = name_to_class[selected_check]
     check_run = checks[check_class]
 
     # Run the check
