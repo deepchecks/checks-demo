@@ -42,11 +42,13 @@ def build_snippet(check: BaseCheck,
 
     if is_train_test:
         check_arguments = 'train_dataset, test_dataset'
-        dataset_string = (f'train_dataset = Dataset(pd.read_csv("train.csv"), {dataset_params})\n'
-                          f'test_dataset = Dataset(pd.read_csv("test.csv"), {dataset_params})')
+        dataset_string = (f'path_to_train_data = "train.csv"\n'
+                          f'path_to_test_data = "test.csv"\n'
+                          f'train_dataset = Dataset(pd.read_csv(path_to_train_data), {dataset_params})\n'
+                          f'test_dataset = Dataset(pd.read_csv(path_to_test_data), {dataset_params})')
     else:
         check_arguments = 'dataset'
-        dataset_string = f'dataset = Dataset(pd.read_csv("data.csv"), {dataset_params})'
+        dataset_string = f'dataset = Dataset(pd.read_csv(<path_to_data.csv>), {dataset_params})'
 
     if model:
         check_arguments += ', model=model'
