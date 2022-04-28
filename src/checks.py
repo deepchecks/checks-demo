@@ -39,10 +39,11 @@ START_PAGE_MD = """
 # Welcome to deepchecks 🚀
 
 In this demo you can play with the existing checks and see how they work on various datasets.
-Each check enables custom currptions to the dataset to demonstrate its value. 
+Each check enables custom corruptions to the dataset to demonstrate its value. 
 
 To start select a check on the left sidebar
 """
+
 
 def show_checks_page():
     TEMPLATE_WRAPPER = """

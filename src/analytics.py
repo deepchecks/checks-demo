@@ -32,6 +32,25 @@ GA_TRACK_CODE = """
 </script>
 """
 
+META_TAGS = """
+<meta id="meta-title" name="title" content="Deepchecks Checks Demo">
+<meta name="description" content="Experiment with Deepchecks library online">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://checks-demo.deepchecks.com/">
+<meta property="og:title" content="Deepchecks Checks Demo">
+<meta property="og:description" content="Experiment with Deepchecks library online">
+<meta property="og:image" content="https://docs.deepchecks.com/stable/_images/checks_and_conditions.png">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://checks-demo.deepchecks.com/">
+<meta property="twitter:title" content="Deepchecks Checks Demo">
+<meta property="twitter:description" content="Experiment with Deepchecks library online">
+<meta property="twitter:image" content="https://docs.deepchecks.com/stable/_images/checks_and_conditions.png">
+"""
+
 
 def inject_ga():
     ga_id = os.environ.get('GA_ID')
@@ -53,6 +72,11 @@ def inject_hotjar():
     HOTJAR_ELEMENT = "hotjar"
     script = HOTJAR_TRACK_CODE.replace('hotjar_id', hotjar_id).replace('element_id', HOTJAR_ELEMENT)
     inject_script_to_streamlit(script, HOTJAR_ELEMENT)
+
+
+def inject_meta_tags():
+    TAGS_ID = "meta-title"
+    inject_script_to_streamlit(META_TAGS, TAGS_ID)
 
 
 def inject_script_to_streamlit(script, element_id):
