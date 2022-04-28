@@ -48,7 +48,8 @@ def build_snippet(check: BaseCheck,
                           f'test_dataset = Dataset(pd.read_csv(path_to_test_data), {dataset_params})')
     else:
         check_arguments = 'dataset'
-        dataset_string = f'dataset = Dataset(pd.read_csv(<path_to_data.csv>), {dataset_params})'
+        dataset_string = f'path_to_data = "data.csv"\n' \
+                         f'dataset = Dataset(pd.read_csv(path_to_data), {dataset_params})'
 
     if model:
         check_arguments += ', model=model'
