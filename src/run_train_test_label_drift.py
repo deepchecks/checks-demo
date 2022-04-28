@@ -19,8 +19,11 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     with manipulate_col:
         # Allow numeric drift
         if test_dataset.label_type == 'regression_label':
-            mean = st.slider('Mean', min_value=0.0, max_value=3.0, step=0.1)
-            std = st.slider('Std', min_value=0.0, max_value=3.0, step=0.1)
+            max_mean = np.mean(new_data[label_name]) * 3
+            max_std = np.std(new_data[label_name]) * 3
+            st.text('Add gaussian noise')
+            mean = st.slider('Mean', min_value=0.0, max_value=max_mean, step=0.1)
+            std = st.slider('Std', min_value=0.0, max_value=max_std, step=0.1)
 
             if mean > 0 or std > 0:
                 new_data[label_name] = insert_numerical_drift(new_data[label_name], mean, std)

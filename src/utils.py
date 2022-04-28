@@ -28,7 +28,7 @@ def insert_categorical_drift(column: pd.Series, percent, category):
 
 
 def insert_numerical_drift(column: pd.Series, mean, std):
-    return column + np.random.normal(mean, std, size=(column.shape[0])) * np.average(column)
+    return column + np.random.normal(mean, std, size=(column.shape[0]))
 
 
 def build_snippet(check: BaseCheck,
