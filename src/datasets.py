@@ -15,6 +15,7 @@ class DatasetOption(TypedDict):
     model: Any
     features_importance: Optional[pd.Series]
     dataset_params: dict
+    model_snippet: str
 
 
 # The avocado model doesn't have FI and calculating it takes a long time and memory. so hard-coding it here.
@@ -35,15 +36,26 @@ AVOCADO_FI = pd.Series({
 
 @st.cache(show_spinner=False, hash_funcs={dict: lambda _: id})
 def get_dataset_options():
-    sample_size = 1000
-    iris_data = iris.load_data(as_train_test=True)
-    avocado_data = avocado.load_data(as_train_test=True)
+    with st.spinner('Loading datasets...'):
+        sample_size = 1000
+        iris_data = iris.load_data(as_train_test=True)
+        avocado_data = avocado.load_data(as_train_test=True)
 
-    return {
-        'iris': DatasetOption(train=iris_data[0].sample(sample_size), test=iris_data[1].sample(sample_size),
-                              model=iris.load_fitted_model(), features_importance=None,
-                              dataset_params=dict(label='target', cat_features=[], label_type='classification_label')),
-        'avocado': DatasetOption(train=avocado_data[0].sample(sample_size), test=avocado_data[1].sample(sample_size),
-                                 model=avocado.load_fitted_model(), features_importance=AVOCADO_FI,
-                                 dataset_params=dict(label='AveragePrice', cat_features=['region', 'type'], datetime_name='Date')),
-    }
+        return {
+            'avocado': DatasetOption(train=avocado_data[0].sample(sample_size),
+                                     test=avocado_data[1].sample(sample_size),
+                                     model=avocado.load_fitted_model(),
+                                     features_importance=AVOCADO_FI,
+                                     dataset_params=dict(label='AveragePrice', cat_features=['region', 'type'],
+                                                         datetime_name='Date'),
+                                     model_snippet=('from deepchecks.tabular.datasets.regression import avocado\n\n'
+                                                    'model = avocado.load_fitted_model()')),
+            'iris': DatasetOption(train=iris_data[0].sample(sample_size),
+                                  test=iris_data[1].sample(sample_size),
+                                  model=iris.load_fitted_model(),
+                                  features_importance=None,
+                                  dataset_params=dict(label='target', cat_features=[], label_type='classification_label'),
+                                  model_snippet=('from deepchecks.tabular.datasets.classification import iris\n\n'
+                                                 'model = iris.load_fitted_model()')),
+
+        }

@@ -8,21 +8,20 @@ from datasets import DatasetOption
 from utils import build_snippet, add_download_button
 
 
-def run(dataset_option: DatasetOption):
+def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     dataset: Dataset = dataset_option['train']
     new_data = dataset.data.copy()
 
-    st.sidebar.subheader(f'Manipulate data')
-
-    if st.sidebar.checkbox('Insert duplicates', value=True):
-        new_data = insert_duplicates(new_data)
+    with check_param_col:
+        st.text('No parameters to control')
+    with manipulate_col:
+        if st.checkbox('Insert duplicates', value=True):
+            new_data = insert_duplicates(new_data)
 
     check = DataDuplicates().add_condition_ratio_not_greater_than(0.1)
-    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_not_greater_than',
-                            condition_params={'max_ratio': 0.1})
+    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_not_greater_than(0.1)')
     dataset = dataset.copy(new_data)
-    add_download_button(dataset)
-    return check.run(dataset), snippet
+    return check.run(dataset), snippet, lambda: add_download_button(dataset)
 
 
 def insert_duplicates(new_data):

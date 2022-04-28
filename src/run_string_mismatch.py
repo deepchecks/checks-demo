@@ -10,27 +10,27 @@ from datasets import DatasetOption
 from utils import build_snippet, add_download_button
 
 
-def run(dataset_option: DatasetOption):
+def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     dataset: Dataset = dataset_option['train']
     new_data = dataset.data.copy()
 
     if not dataset.cat_features:
-        return 'No categorical features found in dataset, try another dataset', ''
-    # Show column selector
-    st.sidebar.subheader(f'Check Parameters')
-    column: str = st.sidebar.selectbox('Select a column', dataset.cat_features)
-    st.sidebar.subheader(f'Manipulate column "{column}"')
+        return 'No categorical features found in dataset, try another dataset', '', lambda: None
 
-    if st.sidebar.checkbox('Insert variants', value=True):
-        new_data[column] = insert_variants(new_data[column])
+    with check_param_col:
+        # Show column selector
+        column: str = st.selectbox('Select a column', dataset.cat_features)
 
-    check = StringMismatch(columns=[column]).add_condition_ratio_variants_not_greater_than()
-    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than',
+    with manipulate_col:
+        if st.checkbox('Insert variants', value=True):
+            new_data[column] = insert_variants(new_data[column])
+
+    check = StringMismatch(columns=[column]).add_condition_ratio_variants_not_greater_than(0.01)
+    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than(0.01)',
                             properties={'columns': [column]})
     dataset = dataset.copy(new_data)
-    add_download_button(dataset)
 
-    return check.run(dataset), snippet
+    return check.run(dataset), snippet, lambda: add_download_button(dataset)
 
 
 def insert_variants(column: pd.Series):

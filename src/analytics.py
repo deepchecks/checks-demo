@@ -42,7 +42,6 @@ def inject_ga():
     GA_ELEMENT = "google_analytics"
     script = GA_TRACK_CODE.replace('ga_id', ga_id).replace('element_id', GA_ELEMENT)
     inject_script_to_streamlit(script, GA_ELEMENT)
-    print('Google Analytics injected')
 
 
 def inject_hotjar():
@@ -54,7 +53,6 @@ def inject_hotjar():
     HOTJAR_ELEMENT = "hotjar"
     script = HOTJAR_TRACK_CODE.replace('hotjar_id', hotjar_id).replace('element_id', HOTJAR_ELEMENT)
     inject_script_to_streamlit(script, HOTJAR_ELEMENT)
-    print('Hotjar injected')
 
 
 def inject_script_to_streamlit(script, element_id):
@@ -70,3 +68,4 @@ def inject_script_to_streamlit(script, element_id):
         html = str(soup)
         new_html = html.replace('<head>', '<head>\n' + script)
         index_path.write_text(new_html)
+        print(f'Injected {element_id}')
