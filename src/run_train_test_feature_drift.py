@@ -50,5 +50,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     test_dataset = test_dataset.copy(new_data)
 
-    return check.run(dataset_option['train'], test_dataset), snippet, \
-            lambda: add_download_button(dataset_option['train'], test_dataset)
+    return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)

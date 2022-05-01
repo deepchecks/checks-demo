@@ -22,5 +22,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
                             model=True)
 
     return check.run(dataset, model=dataset_option['model'], features_importance=dataset_option['features_importance']), \
-           snippet, \
-           lambda: add_download_button(dataset)
+           snippet, (dataset,)

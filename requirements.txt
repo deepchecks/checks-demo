@@ -4,3 +4,4 @@ streamlit==1.8.1
 pillow==9.1.0
 bs4==0.0.1
 python-dotenv==0.20.0
+npdoc_to_md==1.1

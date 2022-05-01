@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -84,10 +84,10 @@ def prepare_properties_string(properties: dict):
     return ', '.join([f'{k}={quote_params(v)}' for k, v in properties.items()]) if properties else ''
 
 
-def add_download_button(train: Dataset, test: Optional[Dataset] = None):
-    if test is None:
-        st.download_button('Download Data', data=train.data.to_csv(), file_name='data.csv',
+def add_download_button(dataset_tuple: Tuple[Dataset, Optional[Dataset]]):
+    if len(dataset_tuple) == 1:
+        st.download_button('Download Data', data=dataset_tuple[0].data.to_csv(), file_name='data.csv',
                                    on_click=lambda: st.balloons())
     else:
-        st.download_button('Download Train Data', data=train.data.to_csv(), file_name='train.csv')
-        st.download_button('Download Test Data', data=test.data.to_csv(), file_name='test.csv')
+        st.download_button('Download Train Data', data=dataset_tuple[0].data.to_csv(), file_name='train.csv')
+        st.download_button('Download Test Data', data=dataset_tuple[1].data.to_csv(), file_name='test.csv')

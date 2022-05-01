@@ -21,7 +21,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = DataDuplicates().add_condition_ratio_not_greater_than(0.05)
     snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_not_greater_than(0.05)')
     dataset = dataset.copy(new_data)
-    return check.run(dataset), snippet, lambda: add_download_button(dataset)
+    return check.run(dataset), snippet, (dataset,)
 
 
 def insert_duplicates(new_data):

@@ -2,6 +2,7 @@ import io
 import json
 from typing import Sequence
 
+import npdoc_to_md
 import streamlit as st
 from deepchecks.tabular.checks import SimpleModelComparison
 from deepchecks.tabular.checks.distribution import TrainTestFeatureDrift, TrainTestLabelDrift
@@ -17,6 +18,7 @@ from datasets import get_dataset_options
 __all__ = ['show_checks_page']
 
 from encoder import AppEncoder
+from utils import add_download_button
 
 
 def get_checks_options():
@@ -93,7 +95,7 @@ def show_checks_page():
     with st.spinner('Running check'):
         check_class = name_to_class[selected_check]
         check_run = checks[check_class]
-        check_result, snippet, download_btn_fn = check_run(dataset, check_params_col, manipulate_col)
+        check_result, snippet, dataset_tuple = check_run(dataset, check_params_col, manipulate_col)
         if isinstance(check_result, str):
             st.error(check_result)
             result_html = None
@@ -107,13 +109,17 @@ def show_checks_page():
     with snippet_col:
         st.subheader('Run this example in your own environment')
         st.text('In order to run snippet download the data')
-        download_btn_fn()
+        add_download_button(dataset_tuple)
         st.code(snippet, language='python')
         with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
-            st.text('Showing the first 5 rows of the dataset')
-            st.dataframe(dataset['train'].data.head(5))
-        with st.expander(f'Check documentation (docstring)'):
-            st.text(check_class.__doc__)
+            dataset_name = 'dataset' if len(dataset_tuple) == 1 else 'test dataset'
+            st.text(f'Showing the first 5 rows of the {dataset_name}')
+            # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
+            st.dataframe(dataset_tuple[-1].data.head(5))
+        with st.expander(f'Check documentation'):
+            namespace = check_class.__name__
+            docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, namespace)
+            st.markdown(docs_md, unsafe_allow_html=True)
 
     result_col.subheader('Check result')
 

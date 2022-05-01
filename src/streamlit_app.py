@@ -20,4 +20,5 @@ logo_with_link = f'<a href="https://deepchecks.com" target="_blank">{logo}</a>'
 st.set_page_config(page_title='Deepchecks Checks Demo', page_icon=icon, layout='wide')
 st.sidebar.markdown(logo_with_link, unsafe_allow_html=True)
 
+
 show_checks_page()
