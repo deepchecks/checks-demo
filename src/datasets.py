@@ -16,6 +16,7 @@ class DatasetOption(TypedDict):
     features_importance: Optional[pd.Series]
     dataset_params: dict
     model_snippet: str
+    contain_categorical_columns: bool
 
 
 # The avocado model doesn't have FI and calculating it takes a long time and memory. so hard-coding it here.
@@ -51,14 +52,16 @@ def get_dataset_options():
                                      dataset_params=dict(label='AveragePrice', cat_features=['region', 'type'],
                                                          datetime_name='Date'),
                                      model_snippet=('from deepchecks.tabular.datasets.regression import avocado\n\n'
-                                                    'model = avocado.load_fitted_model()')),
+                                                    'model = avocado.load_fitted_model()'),
+                                     contain_categorical_columns=True),
             'iris (classification)': DatasetOption(train=iris_data[0].sample(sample_size),
                                   test=iris_data[1].sample(sample_size),
                                   model=iris.load_fitted_model(),
                                   features_importance=None,
                                   dataset_params=dict(label='target', cat_features=[], label_type='classification_label'),
                                   model_snippet=('from deepchecks.tabular.datasets.classification import iris\n\n'
-                                                 'model = iris.load_fitted_model()')),
+                                                 'model = iris.load_fitted_model()'),
+                                  contain_categorical_columns=False),
             'breast_cancer (classification)': DatasetOption(train=breast_cancer_data[0].sample(sample_size),
                                            test=breast_cancer_data[1].sample(sample_size),
                                            model=breast_cancer.load_fitted_model(),
@@ -66,7 +69,8 @@ def get_dataset_options():
                                            dataset_params=dict(label='target', cat_features=[],
                                                                label_type='classification_label'),
                                            model_snippet=('from deepchecks.tabular.datasets.classification import breast_cancer\n\n'
-                                                          'model = breast_cancer.load_fitted_model()')),
+                                                          'model = breast_cancer.load_fitted_model()'),
+                                           contain_categorical_columns=False),
             # 'adult (classification)': DatasetOption(train=adult_data[0].sample(sample_size),
             #                        test=adult_data[1].sample(sample_size),
             #                        model=adult.load_fitted_model(),

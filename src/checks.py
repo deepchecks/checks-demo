@@ -89,6 +89,9 @@ def show_checks_page():
     result_col, snippet_col = st.columns([2, 1])
 
     # select a dataset
+    # For check "string mismatch" we need only datasets that contains categorical features
+    if selected_check == StringMismatch.name():
+        datasets = {name: dataset for name, dataset in datasets.items() if dataset['contain_categorical_columns']}
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
     dataset = datasets[dataset_name]
 
@@ -101,15 +104,10 @@ def show_checks_page():
         check_class = name_to_class[selected_check]
         check_run = checks[check_class]
         check_result, snippet, dataset_tuple = check_run(dataset, check_params_col, manipulate_col)
-        if isinstance(check_result, str):
-            st.error(check_result)
-            result_html = None
-            result_value = None
-        else:
-            string_io = io.StringIO()
-            check_result.save_as_html(string_io)
-            result_html = string_io.getvalue()
-            result_value = check_result.value
+        string_io = io.StringIO()
+        check_result.save_as_html(string_io)
+        result_html = string_io.getvalue()
+        result_value = check_result.value
 
     with snippet_col:
         st.subheader('Run this example in your own environment')

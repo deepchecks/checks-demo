@@ -15,7 +15,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     new_data = dataset.data.copy()
 
     if not dataset.cat_features:
-        return 'No categorical features found in dataset, try another dataset', '', lambda: None
+        raise Exception('No categorical features in dataset, should not have reached here')
 
     with check_param_col:
         # Show column selector
