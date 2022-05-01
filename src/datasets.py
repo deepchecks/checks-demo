@@ -44,7 +44,7 @@ def get_dataset_options():
         # adult_data = adult.load_data(as_train_test=True)
 
         return {
-            'avocado': DatasetOption(train=avocado_data[0].sample(sample_size),
+            'avocado (regression)': DatasetOption(train=avocado_data[0].sample(sample_size),
                                      test=avocado_data[1].sample(sample_size),
                                      model=avocado.load_fitted_model(),
                                      features_importance=AVOCADO_FI,
@@ -52,14 +52,14 @@ def get_dataset_options():
                                                          datetime_name='Date'),
                                      model_snippet=('from deepchecks.tabular.datasets.regression import avocado\n\n'
                                                     'model = avocado.load_fitted_model()')),
-            'iris': DatasetOption(train=iris_data[0].sample(sample_size),
+            'iris (classification)': DatasetOption(train=iris_data[0].sample(sample_size),
                                   test=iris_data[1].sample(sample_size),
                                   model=iris.load_fitted_model(),
                                   features_importance=None,
                                   dataset_params=dict(label='target', cat_features=[], label_type='classification_label'),
                                   model_snippet=('from deepchecks.tabular.datasets.classification import iris\n\n'
                                                  'model = iris.load_fitted_model()')),
-            'breast_cancer': DatasetOption(train=breast_cancer_data[0].sample(sample_size),
+            'breast_cancer (classification)': DatasetOption(train=breast_cancer_data[0].sample(sample_size),
                                            test=breast_cancer_data[1].sample(sample_size),
                                            model=breast_cancer.load_fitted_model(),
                                            features_importance=None,
@@ -67,7 +67,7 @@ def get_dataset_options():
                                                                label_type='classification_label'),
                                            model_snippet=('from deepchecks.tabular.datasets.classification import breast_cancer\n\n'
                                                           'model = breast_cancer.load_fitted_model()')),
-            # 'adult': DatasetOption(train=adult_data[0].sample(sample_size),
+            # 'adult (classification)': DatasetOption(train=adult_data[0].sample(sample_size),
             #                        test=adult_data[1].sample(sample_size),
             #                        model=adult.load_fitted_model(),
             #                        features_importance=None,
