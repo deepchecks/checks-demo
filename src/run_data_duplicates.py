@@ -5,7 +5,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import DataDuplicates
 
 from datasets import DatasetOption
-from utils import build_snippet, add_download_button
+from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):

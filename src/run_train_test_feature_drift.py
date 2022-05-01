@@ -7,7 +7,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestFeatureDrift
 
 from datasets import DatasetOption
-from utils import insert_categorical_drift, insert_numerical_drift, build_snippet, add_download_button
+from utils import insert_categorical_drift, insert_numerical_drift, build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):

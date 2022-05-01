@@ -2,7 +2,7 @@ import streamlit as st
 from deepchecks.tabular.checks import SimpleModelComparison
 
 from datasets import DatasetOption
-from utils import build_snippet, add_download_button
+from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
