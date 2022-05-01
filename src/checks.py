@@ -38,12 +38,17 @@ def update_query_param():
 
 
 START_PAGE_MD = """
-# Welcome to deepchecks 🚀
+# Welcome to Deepchecks' Interactive Checks Demo 🚀
 
-In this demo you can play with the existing checks and see how they work on various datasets.  
+In this demo you can play with the existing checks and see how they work on various datasets. <br/>
 Each check enables custom corruptions to the dataset to showcase its value. 
 
+If you like what we're doing at Deepchecks, please ⭐ &nbsp; us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
+And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable/).
+
 ### ⬅️ To start select a check on the left sidebar
+
+![](https://docs.deepchecks.com/stable/_images/checks_and_conditions.png)
 """
 
 
@@ -76,8 +81,7 @@ def show_checks_page():
                                           index=check_options_names.index(start_check),
                                           on_change=update_query_param)
     if selected_check == NO_CHECK_SELECTED:
-        st.markdown(START_PAGE_MD)
-        st.image('https://docs.deepchecks.com/stable/_images/checks_and_conditions.png')
+        st.markdown(START_PAGE_MD, unsafe_allow_html=True)
         return
 
     # ========= Create the page layout =========
@@ -109,23 +113,11 @@ def show_checks_page():
 
     with snippet_col:
         st.subheader('Run this example in your own environment')
-        st.text('In order to run snippet download the data')
+        st.markdown('In order to run the snippet, download the data and change the paths accordingly. '
+                    'The data you download will correspond to the latest corruptions applied.')
         add_download_button(dataset_tuple)
         st.code(snippet, language='python')
-        with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
-            dataset_name = 'dataset' if len(dataset_tuple) == 1 else 'test dataset'
-            st.text(f'Showing the first 5 rows of the {dataset_name}')
-            # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
-            st.dataframe(dataset_tuple[-1].data.head(5))
-        with st.expander(f'Check documentation'):
-            namespace = check_class.__name__
-            docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, namespace)
-            st.markdown(docs_md, unsafe_allow_html=True)
-
-    result_col.subheader('Check result')
-
-    if result_value is not None:
-        with result_col:
+        if result_value is not None:
             with st.expander('print(result.value)'):
                 # If the result value is simple type (e.g. int, float, str) it can't be displayed as json
                 if isinstance(result_value, (dict, Sequence)):
@@ -133,9 +125,31 @@ def show_checks_page():
                     st.json(result_value)
                 else:
                     st.code(str(result_value), language='python')
+        with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
+            dataset_name = 'dataset' if len(dataset_tuple) == 1 else 'test dataset'
+            st.markdown(f'Showing the first 5 rows of the {dataset_name}')
+            # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
+            st.dataframe(dataset_tuple[-1].data.head(5))
+        with st.expander(f'Documentation of the Check (docstring)'):
+            namespace = check_class.__name__
+            docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, namespace)
+            st.markdown(docs_md, unsafe_allow_html=True)
+
+    result_col.subheader('Check result')
 
     if result_html:
         height_px = 1000
         html = TEMPLATE_WRAPPER.format(body=result_html, height=height_px)
         with result_col:
             components.html(html, height=height_px)
+
+    footnote = """
+    <br><br>
+    **Notes**: 
+    1. For checks that involve 2 datasets, corruption is applied to the test set.
+    2. Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
+    <br><br>
+    If you liked this, please ⭐ &nbsp; us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
+    For more info, check out our [docs](https://docs.deepchecks.com/stable/)
+    """
+    st.sidebar.markdown(footnote, unsafe_allow_html=True)
