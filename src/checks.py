@@ -40,10 +40,10 @@ def update_query_param():
 START_PAGE_MD = """
 # Welcome to deepchecks 🚀
 
-In this demo you can play with the existing checks and see how they work on various datasets.
-Each check enables custom corruptions to the dataset to demonstrate its value. 
+In this demo you can play with the existing checks and see how they work on various datasets.  
+Each check enables custom corruptions to the dataset to showcase its value. 
 
-To start select a check on the left sidebar
+### ⬅️ To start select a check on the left sidebar
 """
 
 
@@ -77,6 +77,7 @@ def show_checks_page():
                                           on_change=update_query_param)
     if selected_check == NO_CHECK_SELECTED:
         st.markdown(START_PAGE_MD)
+        st.image('https://docs.deepchecks.com/stable/_images/checks_and_conditions.png')
         return
 
     # ========= Create the page layout =========
