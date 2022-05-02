@@ -40,10 +40,10 @@ def update_query_param():
 START_PAGE_MD = """
 # Welcome to Deepchecks' Interactive Checks Demo 🚀
 
-In this demo you can play with the existing checks and see how they work on various datasets. <br/>
+In this demo you can play with some of the existing checks and see how they work on various datasets. <br/>
 Each check enables custom corruptions to the dataset to showcase its value. 
 
-If you like what we're doing at Deepchecks, please ⭐ &nbsp; us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
+If you like what we're doing at Deepchecks, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
 And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable/).
 
 ### ⬅️ To start select a check on the left sidebar
@@ -80,6 +80,9 @@ def show_checks_page():
     selected_check = st.sidebar.selectbox('Select a check', check_options_names, key='check_select',
                                           index=check_options_names.index(start_check),
                                           on_change=update_query_param)
+    st.sidebar.markdown('Those are just a few of all the checks deepchecks offers, see '
+                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html)',
+                        unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:
         st.markdown(START_PAGE_MD, unsafe_allow_html=True)
         return
@@ -147,7 +150,7 @@ def show_checks_page():
     1. For checks that involve 2 datasets, corruption is applied to the test set.
     2. Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
     <br><br>
-    If you liked this, please ⭐ &nbsp; us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
+    If you liked this, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
     For more info, check out our [docs](https://docs.deepchecks.com/stable/)
     """
     st.sidebar.markdown(footnote, unsafe_allow_html=True)

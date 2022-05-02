@@ -46,7 +46,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = TrainTestFeatureDrift(**check_props).add_condition_drift_score_not_greater_than()
     snippet = build_snippet(check, dataset_option, properties=check_props,
                             condition_name='add_condition_drift_score_not_greater_than(max_allowed_psi_score = '
-                                           '0.2, max_allowed_earth_movers_score = 0.1')
+                                           '0.2, max_allowed_earth_movers_score = 0.1)')
 
     test_dataset = test_dataset.copy(new_data)
 
