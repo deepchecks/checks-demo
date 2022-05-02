@@ -1,17 +1,17 @@
 import io
 import json
-from typing import Sequence
+from typing import Sequence, TypedDict, Callable, Any
 
 import npdoc_to_md
 import streamlit as st
-from deepchecks.tabular.checks import SimpleModelComparison
+from deepchecks.tabular.checks import SimpleModelComparison, SingleFeatureContributionTrainTest
 from deepchecks.tabular.checks.distribution import TrainTestFeatureDrift, TrainTestLabelDrift
 from deepchecks.tabular.checks.integrity import StringMismatch, DataDuplicates
 from deepchecks.tabular.checks.performance import SegmentPerformance
 import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
-    run_segment_performance, run_simple_model_comparison
+    run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
 from datasets import get_dataset_options
 
 
@@ -21,15 +21,29 @@ from encoder import AppEncoder
 from utils import add_download_button
 
 
+class CheckOption(TypedDict):
+    type: str
+    class_var: Any
+    run_function: Callable
+
+
 def get_checks_options():
-    return {
-        TrainTestFeatureDrift: run_train_test_feature_drift.run,
-        TrainTestLabelDrift: run_train_test_label_drift.run,
-        StringMismatch: run_string_mismatch.run,
-        DataDuplicates: run_data_duplicates.run,
-        SegmentPerformance: run_segment_performance.run,
-        SimpleModelComparison: run_simple_model_comparison.run
-    }
+    return [
+        CheckOption(type='distribution', class_var=TrainTestFeatureDrift,
+                    run_function=run_train_test_feature_drift.run),
+        CheckOption(type='distribution', class_var=TrainTestLabelDrift,
+                    run_function=run_train_test_label_drift.run),
+        CheckOption(type='integrity', class_var=StringMismatch,
+                    run_function=run_string_mismatch.run),
+        CheckOption(type='integrity', class_var=DataDuplicates,
+                    run_function=run_data_duplicates.run),
+        CheckOption(type='performance', class_var=SegmentPerformance,
+                    run_function=run_segment_performance.run),
+        CheckOption(type='performance', class_var=SimpleModelComparison,
+                    run_function=run_simple_model_comparison.run),
+        CheckOption(type='methodology', class_var=SingleFeatureContributionTrainTest,
+                    run_function=run_single_feature_contribution_train_test.run),
+    ]
 
 
 def update_query_param():
@@ -60,12 +74,13 @@ def show_checks_page():
     """
 
     datasets = get_dataset_options()
-    checks = get_checks_options()
+    checks: list = get_checks_options()
     # Translate check classes to names
-    name_to_class = {check_key.name(): check_key for check_key in checks.keys()}
+    name_to_check_opt = {f'{check_opt["class_var"].name()} ({check_opt["type"]})': check_opt
+                         for index, check_opt in enumerate(checks)}
     # Add default option of no check selected
     NO_CHECK_SELECTED = 'No check selected'
-    check_options_names = [NO_CHECK_SELECTED] + list(name_to_class.keys())
+    check_options_names = [NO_CHECK_SELECTED] + list(name_to_check_opt.keys())
 
     query_params = st.experimental_get_query_params()
     # Get selected check from query params if exists
@@ -93,7 +108,7 @@ def show_checks_page():
 
     # select a dataset
     # For check "string mismatch" we need only datasets that contains categorical features
-    if selected_check == StringMismatch.name():
+    if StringMismatch.name() in selected_check:
         datasets = {name: dataset for name, dataset in datasets.items() if dataset['contain_categorical_columns']}
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
     dataset = datasets[dataset_name]
@@ -104,8 +119,8 @@ def show_checks_page():
     manipulate_col = st.sidebar.container()
     # Run the check
     with st.spinner('Running check'):
-        check_class = name_to_class[selected_check]
-        check_run = checks[check_class]
+        check_opt = name_to_check_opt[selected_check]
+        check_run = check_opt['run_function']
         check_result, snippet, dataset_tuple = check_run(dataset, check_params_col, manipulate_col)
         string_io = io.StringIO()
         check_result.save_as_html(string_io)
@@ -132,11 +147,11 @@ def show_checks_page():
             # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
             st.dataframe(dataset_tuple[-1].data.head(5))
         with st.expander(f'Documentation of the Check (docstring)'):
-            namespace = check_class.__name__
-            docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, namespace)
+            check_class = check_opt['class_var']
+            docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, check_class.__name__)
             st.markdown(docs_md, unsafe_allow_html=True)
 
-    result_col.subheader('Check result')
+    result_col.subheader(selected_check)
 
     if result_html:
         height_px = 1000
