@@ -12,13 +12,15 @@ import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
     run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
+from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, CHECK_QUERY_PARAM
 from datasets import get_dataset_options
 
 
 __all__ = ['show_checks_page']
 
 from encoder import AppEncoder
-from utils import add_download_button
+from streamlit_persist import persist
+from utils import add_download_button, get_query_param, set_query_param
 
 
 class CheckOption(TypedDict):
@@ -46,26 +48,6 @@ def get_checks_options():
     ]
 
 
-def update_query_param():
-    # Set in the query params the selected check
-    st.experimental_set_query_params(check=st.session_state.check_select)
-
-
-START_PAGE_MD = """
-# Welcome to Deepchecks' Interactive Checks Demo 🚀
-
-In this demo you can play with some of the existing checks and see how they work on various datasets. <br/>
-Each check enables custom corruptions to the dataset to showcase its value. 
-
-If you like what we're doing at Deepchecks, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
-And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable/).
-
-### ⬅️ To start select a check on the left sidebar
-
-![](https://docs.deepchecks.com/stable/_images/checks_and_conditions.png)
-"""
-
-
 def show_checks_page():
     TEMPLATE_WRAPPER = """
     <div style="height:{height}px;overflow-y:auto;position:relative;">
@@ -79,27 +61,14 @@ def show_checks_page():
     name_to_check_opt = {f'{check_opt["class_var"].name()} ({check_opt["type"]})': check_opt
                          for index, check_opt in enumerate(checks)}
     # Add default option of no check selected
-    NO_CHECK_SELECTED = 'No check selected'
     check_options_names = [NO_CHECK_SELECTED] + list(name_to_check_opt.keys())
 
-    query_params = st.experimental_get_query_params()
-    # Get selected check from query params if exists
-    if 'check' in query_params:
-        start_check = query_params['check'][0]
-    # Set default query params if not exists
-    else:
-        st.experimental_set_query_params(check=NO_CHECK_SELECTED)
-        start_check = NO_CHECK_SELECTED
-
     # select a check
-    selected_check = st.sidebar.selectbox('Select a check', check_options_names, key='check_select',
-                                          index=check_options_names.index(start_check),
-                                          on_change=update_query_param)
+    selected_check = st.sidebar.selectbox('Select a check', check_options_names, key=persist(CHECK_STATE_ID))
     st.sidebar.markdown('Those are just a few of all the checks deepchecks offers, see '
                         '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html)',
                         unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:
-        st.markdown(START_PAGE_MD, unsafe_allow_html=True)
         return
 
     # ========= Create the page layout =========

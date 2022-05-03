@@ -1,34 +1,10 @@
 from typing import Optional, Tuple
 
-import numpy as np
-import pandas as pd
 import streamlit as st
 from deepchecks import BaseCheck, TrainTestBaseCheck
 from deepchecks.tabular import Dataset
 
 from datasets import DatasetOption
-
-
-def insert_categorical_drift(column: pd.Series, percent, category):
-    column = column.to_numpy()
-    categories = list(set(np.unique(column)) - {category})
-    ratio = percent / 100
-    category_count = np.count_nonzero(column == category)
-    category_ratio = category_count / column.shape[0]
-    amount_to_replace = int(column.shape[0] * (ratio - category_ratio))
-    if amount_to_replace == 0:
-        return column
-
-    possible_indices = np.where(column != category) if amount_to_replace > 0 else np.where(column == category)
-    indices_to_replace = np.random.choice(possible_indices[0], abs(amount_to_replace), replace=False)
-    for index in indices_to_replace:
-        column[index] = category if amount_to_replace > 0 else np.random.choice(categories)
-
-    return column
-
-
-def insert_numerical_drift(column: pd.Series, mean, std):
-    return column + np.random.normal(mean, std, size=(column.shape[0]))
 
 
 def build_snippet(check: BaseCheck,
@@ -87,7 +63,21 @@ def prepare_properties_string(properties: dict):
 def add_download_button(dataset_tuple: Tuple[Dataset, Optional[Dataset]]):
     if len(dataset_tuple) == 1:
         st.download_button('Download Data', data=dataset_tuple[0].data.to_csv(), file_name='data.csv',
-                                   on_click=lambda: st.balloons())
+                           on_click=lambda: st.balloons())
     else:
         st.download_button('Download Train Data', data=dataset_tuple[0].data.to_csv(), file_name='train.csv')
         st.download_button('Download Test Data', data=dataset_tuple[1].data.to_csv(), file_name='test.csv')
+
+
+def get_query_param(param_name: str):
+    query_params = st.experimental_get_query_params()
+    # Get selected check from query params if exists
+    if param_name in query_params:
+        return query_params[param_name][0]
+    # Set default query params if not exists
+    else:
+        return None
+
+
+def set_query_param(param_name: str, state_id):
+    st.experimental_set_query_params(**{param_name: st.session_state[state_id]})
