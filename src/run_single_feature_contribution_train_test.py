@@ -1,9 +1,8 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import SingleFeatureContributionTrainTest
 
+from corruptions import relate_column_to_label
 from datasets import DatasetOption
 from utils import build_snippet
 
@@ -27,7 +26,3 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     snippet = build_snippet(check, dataset_option,
                             condition_name='add_condition_feature_pps_in_train_not_greater_than(0.7)')
     return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)
-
-
-def relate_column_to_label(dataset, column: pd.Series, label_power):
-    return column + (dataset.data[dataset.label_name] * column.mean() * label_power)

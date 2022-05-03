@@ -1,11 +1,8 @@
-import random
-
-import numpy as np
-import pandas as pd
 import streamlit as st
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import StringMismatch
 
+from corruptions import insert_variants
 from datasets import DatasetOption
 from utils import build_snippet
 
@@ -32,31 +29,3 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     dataset = dataset.copy(new_data)
 
     return check.run(dataset), snippet, (dataset,)
-
-
-def insert_variants(column: pd.Series, percent):
-    column = column.to_numpy()
-    value = np.random.choice(column)
-    variants = random_variants(value)
-    size = min(int(len(column) * percent / 100), len(column))
-    indices_to_replace = np.random.choice(len(column), size=size, replace=False)
-    for index in indices_to_replace:
-        column[index] = random.choice(variants)
-    return column
-
-
-def flip_case(value):
-    return value.upper() if value.islower() else value.lower()
-
-
-def random_variants(value):
-    functions = [
-        lambda x: flip_case(x[0]) + x[1:],  # Switch upper lower first letter
-        lambda x: x.replace(' ', '-'),  # Replace space with -
-        lambda x: x + '.',  # Add . at the end
-        lambda x: x.upper(),  # Upper case all letters
-        lambda x: x.lower(),  # Lower case all letters
-        lambda x: ' ' + x,  # Add space at the beginning
-    ]
-
-    return [f(value) for f in functions if f(value) != value]
