@@ -49,11 +49,17 @@ def show_suites_page():
 
     suite_instance = suites[selected_suite]
     with st.spinner(f'Running {selected_suite} on {dataset_name}'):
+        # Create placeholder to show stuff while running
+        placeholder = st.empty()
+        placeholder.markdown('This may take a while... In the meantime here is a cute monkey<br>'
+                             '<img src="https://wallpaperaccess.com/full/1137839.jpg" alt="drawing" width="400"/>'
+                             , unsafe_allow_html=True)
         result = suite_instance.run(train_dataset=dataset_opt.train, test_dataset=corrupt_dataset, model=dataset_opt.model,
                                     features_importance=dataset_opt.features_importance)
         string_io = io.StringIO()
         result.save_as_html(string_io)
         result_html = string_io.getvalue()
+        placeholder.empty()
 
     height_px = 1200
     html = TEMPLATE_WRAPPER.format(body=result_html, height=height_px)
