@@ -8,7 +8,7 @@ from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    test_dataset: Dataset = dataset_option['test']
+    test_dataset: Dataset = dataset_option.test
     new_data = test_dataset.data.copy()
 
     with check_param_col:
@@ -25,4 +25,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = SingleFeatureContributionTrainTest().add_condition_feature_pps_in_train_not_greater_than(0.7)
     snippet = build_snippet(check, dataset_option,
                             condition_name='add_condition_feature_pps_in_train_not_greater_than(0.7)')
-    return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)

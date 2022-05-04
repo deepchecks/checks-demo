@@ -11,7 +11,7 @@ from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    test_dataset: Dataset = dataset_option['test']
+    test_dataset: Dataset = dataset_option.test
     new_data = test_dataset.data.copy()
     label_name = test_dataset.label_name
 
@@ -45,4 +45,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
                                            ' = 0.2, max_allowed_earth_movers_score = 0.1)')
     test_dataset = test_dataset.copy(new_data)
 
-    return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)

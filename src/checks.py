@@ -12,7 +12,7 @@ import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
     run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
-from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, CHECK_QUERY_PARAM
+from constants import NO_CHECK_SELECTED, CHECK_STATE_ID
 from datasets import get_dataset_options
 
 
@@ -20,7 +20,7 @@ __all__ = ['show_checks_page']
 
 from encoder import AppEncoder
 from streamlit_persist import persist
-from utils import add_download_button, get_query_param, set_query_param
+from utils import add_download_button
 
 
 class CheckOption(TypedDict):
@@ -78,7 +78,7 @@ def show_checks_page():
     # select a dataset
     # For check "string mismatch" we need only datasets that contains categorical features
     if StringMismatch.name() in selected_check:
-        datasets = {name: dataset for name, dataset in datasets.items() if dataset['contain_categorical_columns']}
+        datasets = {name: dataset for name, dataset in datasets.items() if dataset.contain_categorical_columns}
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
     dataset = datasets[dataset_name]
 

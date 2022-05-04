@@ -14,7 +14,7 @@ def build_snippet(check: BaseCheck,
                   condition_name: str = None):
     check_name = check.__class__.__name__
     is_train_test = isinstance(check, TrainTestBaseCheck)
-    dataset_params = prepare_properties_string(dataset_opt['dataset_params'])
+    dataset_params = prepare_properties_string(dataset_opt.dataset_params)
 
     if is_train_test:
         check_arguments = 'train_dataset, test_dataset'
@@ -29,7 +29,7 @@ def build_snippet(check: BaseCheck,
 
     if model:
         check_arguments += ', model=model'
-        model_load_string = dataset_opt['model_snippet']
+        model_load_string = dataset_opt.model_snippet
     else:
         model_load_string = ''
     properties_string = prepare_properties_string(properties)
@@ -74,9 +74,7 @@ def get_query_param(param_name: str):
     # Get selected check from query params if exists
     if param_name in query_params:
         return query_params[param_name][0]
-    # Set default query params if not exists
-    else:
-        return None
+    return None
 
 
 def set_query_param(param_name: str, state_id):

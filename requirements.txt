@@ -1,5 +1,5 @@
-deepchecks
-# git+https://github.com/deepchecks/deepchecks.git@main#egg=deepchecks
+# deepchecks
+git+https://github.com/deepchecks/deepchecks.git@main#egg=deepchecks
 streamlit==1.8.1
 pillow==9.1.0
 bs4==0.0.1

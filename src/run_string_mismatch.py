@@ -8,7 +8,7 @@ from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    dataset: Dataset = dataset_option['train']
+    dataset: Dataset = dataset_option.train
     new_data = dataset.data.copy()
 
     if not dataset.cat_features:

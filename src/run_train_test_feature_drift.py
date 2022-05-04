@@ -12,7 +12,7 @@ from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    test_dataset: Dataset = dataset_option['test']
+    test_dataset: Dataset = dataset_option.test
     new_data = test_dataset.data.copy()
     # Show column selector
     with check_param_col:
@@ -51,4 +51,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     test_dataset = test_dataset.copy(new_data)
 
-    return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)

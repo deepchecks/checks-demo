@@ -8,7 +8,7 @@ from utils import build_snippet
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    dataset: Dataset = dataset_option['test']
+    dataset: Dataset = dataset_option.test
 
     with check_param_col:
         column_1: str = st.selectbox('Select first column', dataset.features)
@@ -21,5 +21,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = SegmentPerformance(**properties)
     snippet = build_snippet(check, dataset_option, properties=properties, model=True)
 
-    return check.run(dataset, model=dataset_option['model'], features_importance=dataset_option['features_importance']), \
+    return check.run(dataset, model=dataset_option.model, features_importance=dataset_option.features_importance), \
            snippet, (dataset,)
