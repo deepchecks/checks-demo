@@ -75,16 +75,16 @@ def get_dataset_options():
                 model_snippet=('from deepchecks.tabular.datasets.classification import breast_cancer\n\n'
                                'model = breast_cancer.load_fitted_model()'),
                 contain_categorical_columns=False),
-            'adult (classification)': DatasetOption(
-                train=adult_data[0].sample(sample_size),
-                test=adult_data[1].sample(sample_size),
-                model=adult.load_fitted_model(),
-                features_importance=None,
-                dataset_params=dict(label='income', cat_features=['workclass', 'education', 'marital-status',
-                                    'occupation', 'relationship', 'race', 'sex', 'native-country'],
-                                    label_type='classification_label'),
-                model_snippet=('from deepchecks.tabular.datasets.classification import adult\n\n'
-                               'model = adult.load_fitted_model()'),
-                contain_categorical_columns=True),
+            # 'adult (classification)': DatasetOption(
+            #     train=adult_data[0].sample(sample_size),
+            #     test=adult_data[1].sample(sample_size),
+            #     model=adult.load_fitted_model(),
+            #     features_importance=None,
+            #     dataset_params=dict(label='income', cat_features=['workclass', 'education', 'marital-status',
+            #                         'occupation', 'relationship', 'race', 'sex', 'native-country'],
+            #                         label_type='classification_label'),
+            #     model_snippet=('from deepchecks.tabular.datasets.classification import adult\n\n'
+            #                    'model = adult.load_fitted_model()'),
+            #     contain_categorical_columns=True),
 
         }

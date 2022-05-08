@@ -10,7 +10,7 @@ def insert_numerical_drift(column: pd.Series, mean: float, std: float):
 
 
 def insert_categorical_drift(column: pd.Series, percent: int, category: str):
-    column = column.to_numpy()
+    column = column.to_numpy() if isinstance(column, pd.Series) else column
     categories = list(set(np.unique(column)) - {category})
     ratio = percent / 100
     category_count = np.count_nonzero(column == category)
