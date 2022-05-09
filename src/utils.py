@@ -1,8 +1,8 @@
 from contextlib import contextmanager
-from io import StringIO
 from threading import current_thread
 from typing import Optional, Tuple
 
+import numpy as np
 import streamlit as st
 from deepchecks import BaseCheck, TrainTestBaseCheck
 from deepchecks.tabular import Dataset
@@ -126,3 +126,8 @@ def st_redirect(src, dst):
     finally:
         src.write = old_write
         placeholder.empty()
+
+
+def std_without_outliers(data, outlier_threshold=0.025):
+    data = data.where((data < np.quantile(data, 1 - outlier_threshold)) & (data > np.percentile(data, outlier_threshold)))
+    return np.std(data)

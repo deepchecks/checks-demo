@@ -65,7 +65,7 @@ def show_checks_page():
 
     # select a check
     selected_check = st.sidebar.selectbox('Select a check', check_options_names, key=persist(CHECK_STATE_ID))
-    st.sidebar.markdown('Those are just a few of all the checks deepchecks offers, see '
+    st.sidebar.markdown('These are just a few of the checks deepchecks offers, full list in the '
                         '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html)',
                         unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:

@@ -6,7 +6,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestLabelDrift
 
 from datasets import DatasetOption
-from utils import build_snippet
+from utils import build_snippet, std_without_outliers
 from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
@@ -20,11 +20,10 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     with manipulate_col:
         # Allow numeric drift
         if test_dataset.label_type == 'regression_label':
-            max_mean = np.mean(new_data[label_name]) * 3
-            max_std = np.std(new_data[label_name]) * 3
+            col_std = std_without_outliers(new_data[label_name])
             st.text('Add gaussian noise')
-            mean = st.slider('Mean', min_value=0.0, max_value=max_mean, step=0.1)
-            std = st.slider('Std', min_value=0.0, max_value=max_std, step=0.1)
+            mean = st.slider('Mean', min_value=0.0, max_value=col_std * 5, step=col_std / 20)
+            std = st.slider('Std', min_value=0.0, max_value=col_std * 5, step=col_std / 20)
 
             if mean > 0 or std > 0:
                 new_data[label_name] = insert_numerical_drift(new_data[label_name], mean, std)

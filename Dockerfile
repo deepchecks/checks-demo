@@ -9,9 +9,6 @@ RUN apt update && apt install git -y
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY .streamlit .streamlit
-COPY resources resources
-COPY run.sh run.sh
-COPY src src
+COPY . .
 
 CMD ["sh", "run.sh"]
