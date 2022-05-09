@@ -20,16 +20,21 @@ HOTJAR_TRACK_CODE = """
 </script>
 """
 
-GA_TRACK_CODE = """
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ga_id"></script>
-<script id="element_id">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+GTM_HEAD_CODE = """
+<!-- Google Tag Manager -->
+<script id="element_id">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-gtm_id');</script>
+<!-- End Google Tag Manager -->
+"""
 
-  gtag('config', 'G-ga_id');
-</script>
+GTM_BODY_CODE = """
+<!-- Google Tag Manager (noscript) -->
+<noscript id="element_id"><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-gtm_id"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 """
 
 META_TAGS = """
@@ -52,17 +57,6 @@ META_TAGS = """
 """
 
 
-def inject_ga():
-    ga_id = os.environ.get('GA_ID')
-    if ga_id is None:
-        print('No GA_ID found in environment variables')
-        return
-
-    GA_ELEMENT = "google_analytics"
-    script = GA_TRACK_CODE.replace('ga_id', ga_id).replace('element_id', GA_ELEMENT)
-    inject_script_to_streamlit(script, GA_ELEMENT)
-
-
 def inject_hotjar():
     hotjar_id = os.environ.get('HOTJAR_ID')
     if hotjar_id is None:
@@ -79,7 +73,22 @@ def inject_meta_tags():
     inject_script_to_streamlit(META_TAGS, TAGS_ID)
 
 
-def inject_script_to_streamlit(script, element_id):
+def inject_gtm():
+    gtm_id = os.environ.get('GTM_ID')
+    if gtm_id is None:
+        print('No GTM_ID found in environment variables')
+        return
+
+    GTM_HEAD_ELEMENT = "google_tag_manager_head"
+    head_code = GTM_HEAD_CODE.replace('gtm_id', gtm_id).replace('element_id', GTM_HEAD_ELEMENT)
+    inject_script_to_streamlit(head_code, GTM_HEAD_ELEMENT)
+
+    GTM_BODY_ELEMENT = "google_tag_manager_body"
+    body_code = GTM_BODY_CODE.replace('gtm_id', gtm_id).replace('element_id', GTM_BODY_ELEMENT)
+    inject_script_to_streamlit(body_code, GTM_BODY_ELEMENT, inject_head=False)
+
+
+def inject_script_to_streamlit(script, element_id, inject_head=True):
     # Insert the script in the head tag of the static template inside your virtual
     index_path = Path(st.__file__).parent / "static" / "index.html"
     soup = BeautifulSoup(index_path.read_text(), features="html.parser")
@@ -90,6 +99,9 @@ def inject_script_to_streamlit(script, element_id):
         else:
             shutil.copy(index_path, bck_index)  # keep a backup
         html = str(soup)
-        new_html = html.replace('<head>', '<head>\n' + script)
+        if inject_head:
+            new_html = html.replace('<head>', '<head>\n' + script)
+        else:
+            new_html = html.replace('<body>', '<body>\n' + script)
         index_path.write_text(new_html)
         print(f'Injected {element_id}')

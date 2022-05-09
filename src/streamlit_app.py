@@ -4,7 +4,7 @@ import streamlit as st
 from PIL import Image
 from dotenv import load_dotenv
 
-from analytics import inject_ga, inject_hotjar, inject_meta_tags
+from analytics import inject_hotjar, inject_meta_tags, inject_gtm
 from checks import show_checks_page
 
 from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, CHECK_QUERY_PARAM, SUITE_QUERY_PARAM, NO_SUITE_SELECTED, \
@@ -15,9 +15,9 @@ from utils import get_query_param, set_query_param
 
 # Inject to streamlit index page analytics code and meta tags
 load_dotenv()
-inject_ga()
 inject_hotjar()
 inject_meta_tags()
+inject_gtm()
 
 icon = Image.open(Path(__file__).parent.parent / 'resources' / 'favicon.ico')
 logo = open(Path(__file__).parent.parent / 'resources' / 'deepchecks_logo.svg').read()
@@ -44,9 +44,10 @@ def mode_change():
 
 
 # Select mode, using URL query params if exists
-suite_query_value = get_query_param(SUITE_QUERY_PARAM)
-st.session_state['mode-radio'] = 'Suite' if suite_query_value is not None else 'Checks'
-mode = st.sidebar.radio('Mode', ['Checks', 'Suite'], key='mode-radio', on_change=mode_change)
+# suite_query_value = get_query_param(SUITE_QUERY_PARAM)
+# st.session_state['mode-radio'] = 'Suite' if suite_query_value is not None else 'Checks'
+# mode = st.sidebar.radio('Mode', ['Checks', 'Suite'], key='mode-radio', on_change=mode_change)
+mode = 'Checks'
 
 if mode == 'Checks':
     set_query_param(CHECK_QUERY_PARAM, CHECK_STATE_ID)
