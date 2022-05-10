@@ -19,6 +19,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         column: str = st.selectbox('Select a column', dataset.cat_features)
 
     with manipulate_col:
+        st.subheader('Add Corruption to Data')
         percent = st.slider('Variants Percent', value=10, min_value=0, max_value=100, step=1)
         if percent > 0:
             new_data[column] = insert_variants(new_data[column], percent)

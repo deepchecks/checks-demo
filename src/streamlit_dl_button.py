@@ -65,15 +65,14 @@ def download_button(object_to_download, download_filename, button_text, pickle_i
     button_id = re.sub('\d+', '', button_uuid)
 
     prim_color = st.config.get_option('theme.primaryColor') or '#F43365'
-    bg_color = st.config.get_option('theme.backgroundColor') or '#FFFFFF'
-    sbg_color = st.config.get_option('theme.secondaryBackgroundColor') or '#000000'
-    txt_color = st.config.get_option('theme.textColor') or '#8a0294'
+    sbg_color = st.config.get_option('theme.secondaryBackgroundColor') or 'rgb(240,242,246)'
+    txt_color = st.config.get_option('theme.textColor') or '#C866D3'
     font = st.config.get_option('theme.font') or 'sans serif'
 
     custom_css = f"""
         <style>
             #{button_id} {{
-                background-color: {bg_color};
+                background-color: {sbg_color};
                 color: {txt_color};
                 padding: 0.25rem 0.75rem;
                 position: relative;
@@ -81,7 +80,7 @@ def download_button(object_to_download, download_filename, button_text, pickle_i
                 border-radius: 0.25rem;
                 border-width: 1px;
                 border-style: solid;
-                border-color: {sbg_color};
+                border-color: #000000;
                 border-image: initial;
                 filter: brightness(105%);
                 justify-content: center;
@@ -113,7 +112,8 @@ def download_button(object_to_download, download_filename, button_text, pickle_i
                 }}
         </style> """
 
+    dl_icon = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAbklEQVRIiWNgGEngKAMDw38oPkysJkYSLPhPjl4mEiwgC4xaMGoBbS0oZ0BkLPQ8wIAmV0+uA9AtwYbJNpwYSyg2HJ8lVDMcmyVEG85MggVHGSAF3EEGBoZGkpw2CvAB5EoDW2ai2GyaFxVDHwAAvJEmWknL71UAAAAASUVORK5CYII="/>'
     dl_link = custom_css + f'<a download="{download_filename}" class= "" id="{button_id}" ' \
-                           f'href="data:{mimetype};base64,{b64}">{button_text}</a>'
+                           f'href="data:{mimetype};base64,{b64}">{dl_icon} {button_text}</a>'
 
     return dl_link

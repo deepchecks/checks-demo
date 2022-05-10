@@ -20,6 +20,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         column: str = st.selectbox('Select a column', columns)
 
     with manipulate_col:
+        st.subheader('Add Corruption to Test Data')
         # Allow numeric drift
         if column in test_dataset.numerical_features:
             col_std = std_without_outliers(new_data[column])
@@ -50,5 +51,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     test_dataset = test_dataset.copy(new_data)
 
-    put_data_on_state(dataset_option.train, test_dataset)
+    put_data_on_state(dataset_option.train, test_dataset, dataset_type='test', corrupted_dataset_index=1)
     return check.run(dataset_option.train, test_dataset), snippet

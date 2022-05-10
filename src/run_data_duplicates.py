@@ -13,6 +13,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     with check_param_col:
         st.text('No parameters to control')
     with manipulate_col:
+        st.subheader('Add Corruption to Data')
         rows_to_duplicate = st.slider('Number rows to duplicate', min_value=1, max_value=5, value=5)
         percent = st.slider('Duplicate percent', value=20, min_value=0, max_value=100, step=1)
         if percent > 0:

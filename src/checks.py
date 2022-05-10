@@ -88,7 +88,6 @@ def show_checks_page():
 
     st.sidebar.subheader('Check\'s Parameters')
     check_params_col = st.sidebar.container()
-    st.sidebar.subheader('Add Corruption')
     manipulate_col = st.sidebar.container()
     # Run the check
     with st.spinner('Running check'):
@@ -116,10 +115,8 @@ def show_checks_page():
                     st.code(str(result_value), language='python')
         data_state = st.session_state[DATA_STATE_ID]
         with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
-            dataset_name = 'dataset' if len(data_state) == 1 else 'test dataset'
-            st.markdown(f'Showing the first 5 rows of the {dataset_name}')
-            # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
-            st.dataframe(data_state[-1].head(5))
+            st.markdown(f'Showing the first 5 rows of the {data_state["dataset_type"]}')
+            st.dataframe(data_state['data'][data_state['corrupted_dataset_index']].head(5))
         with st.expander(f'Documentation of the Check (docstring)'):
             check_class = check_opt['class_var']
             docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, check_class.__name__)
@@ -133,11 +130,11 @@ def show_checks_page():
         with result_col:
             components.html(html, height=height_px)
 
+    st.sidebar.button('click here')
     footnote = """
     <br><br>
-    **Notes**: 
-    1. For checks that involve 2 datasets, corruption is applied to the test set.
-    2. Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
+    **Note**: 
+    Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
     <br><br>
     If you liked this, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
     For more info, check out our [docs](https://docs.deepchecks.com/stable?utm_campaign=docs_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)

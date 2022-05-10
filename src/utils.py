@@ -88,15 +88,17 @@ def prepare_properties_string(properties: dict):
     return ', '.join([f'{k}={quote_params(v)}' for k, v in properties.items()]) if properties else ''
 
 
-def put_data_on_state(*datasets):
+def put_data_on_state(*datasets, dataset_type=None, corrupted_dataset_index=0):
+    dataset_type = dataset_type + ' dataset' if dataset_type else 'dataset'
     data_frames = [d.data for d in datasets]
-    st.session_state[DATA_STATE_ID] = data_frames
+    st.session_state[DATA_STATE_ID] = {'data': data_frames, 'dataset_type': dataset_type,
+                                       'corrupted_dataset_index': corrupted_dataset_index}
 
 
 def add_download_button():
     if DATA_STATE_ID not in st.session_state:
         return
-    data_frames = st.session_state[DATA_STATE_ID]
+    data_frames = st.session_state[DATA_STATE_ID]['data']
     if len(data_frames) == 1:
         download_md = download_button(data_frames[0], 'data.csv', 'Download Data')
     else:
