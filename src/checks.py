@@ -66,7 +66,7 @@ def show_checks_page():
     # select a check
     selected_check = st.sidebar.selectbox('Select a check', check_options_names, key=persist(CHECK_STATE_ID))
     st.sidebar.markdown('These are just a few of the checks deepchecks offers, full list in the '
-                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html)',
+                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html?utm_campaign=gallery_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)',
                         unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:
         return
@@ -74,7 +74,8 @@ def show_checks_page():
     # ========= Create the page layout =========
     st.markdown('# Inject a Corruption and See What Deepchecks Would Find \n'
                 '\* This demo focuses on individual checks. To get a feel for test suites, we recommend running the example from the '
-                '[Quickstart](https://docs.deepchecks.com/stable/auto_tutorials/tabular/plot_quickstart_in_5_minutes.html) on your environment.')
+                '[Quickstart](https://docs.deepchecks.com/stable/auto_tutorials/tabular/plot_quickstart_in_5_minutes.html?utm_campaign=quickstart_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)'
+                ' on your environment.')
 
     result_col, snippet_col = st.columns([2, 1])
 
@@ -139,6 +140,6 @@ def show_checks_page():
     2. Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
     <br><br>
     If you liked this, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
-    For more info, check out our [docs](https://docs.deepchecks.com/stable/)
+    For more info, check out our [docs](https://docs.deepchecks.com/stable?utm_campaign=docs_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)
     """
     st.sidebar.markdown(footnote, unsafe_allow_html=True)

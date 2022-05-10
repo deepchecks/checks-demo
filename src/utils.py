@@ -9,6 +9,7 @@ from streamlit.scriptrunner.script_run_context import SCRIPT_RUN_CONTEXT_ATTR_NA
 
 from constants import DATA_STATE_ID
 from datasets import DatasetOption
+from streamlit_dl_button import download_button
 
 
 def build_run_params(is_train_test: bool, model: bool, dataset_opt: DatasetOption):
@@ -97,11 +98,11 @@ def add_download_button():
         return
     data_frames = st.session_state[DATA_STATE_ID]
     if len(data_frames) == 1:
-        st.download_button('Download Data', data=data_frames[0].to_csv().encode('utf-8'), file_name='data.csv',
-                           mime="text/csv", on_click=lambda: st.balloons())
+        download_md = download_button(data_frames[0], 'data.csv', 'Download Data')
     else:
-        st.download_button('Download Train Data', data=data_frames[0].to_csv().encode('utf-8'), file_name='train.csv', mime="text/csv")
-        st.download_button('Download Test Data', data=data_frames[1].to_csv().encode('utf-8'), file_name='test.csv', mime="text/csv")
+        download_md = download_button(data_frames[0], 'train.csv', 'Download Train Data')
+        download_md += download_button(data_frames[1], 'test.csv', 'Download Test Data')
+    st.markdown(download_md + '<br>', unsafe_allow_html=True)
 
 
 def get_query_param(param_name: str):

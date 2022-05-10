@@ -22,8 +22,8 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         new_data[column] = relate_column_to_label(test_dataset, new_data[column], power)
         test_dataset = test_dataset.copy(new_data)
 
-    check = SingleFeatureContributionTrainTest().add_condition_feature_pps_in_train_not_greater_than(0.7)
+    check = SingleFeatureContributionTrainTest().add_condition_feature_pps_difference_not_greater_than(0.2)
     snippet = build_snippet(check, dataset_option,
-                            condition_name='add_condition_feature_pps_in_train_not_greater_than(0.7)')
+                            condition_name='add_condition_feature_pps_difference_not_greater_than(0.2)')
     put_data_on_state(dataset_option.train, test_dataset)
     return check.run(dataset_option.train, test_dataset), snippet

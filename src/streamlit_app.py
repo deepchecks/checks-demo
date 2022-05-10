@@ -64,12 +64,12 @@ if (mode == 'Suite' and st.session_state.get(SUITE_STATE_ID) == NO_SUITE_SELECTE
     # Welcome to Deepchecks' Interactive Checks Demo 🚀
     
     In this demo you can play with some of the existing checks and see how they work on various datasets. <br/>
-    Each check enables custom corruptions to the dataset to showcase its value. 
+    The demo enables custom corruptions to the datasets to showcase the checks' value. 
     
     If you like what we're doing at Deepchecks, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
-    And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable/).
+    And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable?utm_campaign=docs_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com).
     
-    ### ⬅️ To start use the select on the left sidebar
+    ### ⬅️ Start by selecting a check in the menu
     
     ![](https://docs.deepchecks.com/stable/_images/checks_and_conditions.png)
     """, unsafe_allow_html=True)
