@@ -4,7 +4,7 @@ from deepchecks.tabular.checks import StringMismatch
 
 from corruptions import insert_variants
 from datasets import DatasetOption
-from utils import build_snippet
+from utils import build_snippet, put_data_on_state
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
@@ -27,5 +27,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than(0.01)',
                             properties={'columns': [column]})
     dataset = dataset.copy(new_data)
-
-    return check.run(dataset), snippet, (dataset,)
+    put_data_on_state(dataset)
+    return check.run(dataset), snippet

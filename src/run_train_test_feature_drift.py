@@ -7,7 +7,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestFeatureDrift
 
 from datasets import DatasetOption
-from utils import build_snippet, std_without_outliers
+from utils import build_snippet, std_without_outliers, put_data_on_state
 from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
@@ -50,4 +50,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     test_dataset = test_dataset.copy(new_data)
 
-    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)
+    put_data_on_state(dataset_option.train, test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet

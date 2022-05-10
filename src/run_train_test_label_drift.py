@@ -6,7 +6,7 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestLabelDrift
 
 from datasets import DatasetOption
-from utils import build_snippet, std_without_outliers
+from utils import build_snippet, std_without_outliers, put_data_on_state
 from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
@@ -43,5 +43,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
                             condition_name='add_condition_drift_score_not_greater_than(max_allowed_psi_score'
                                            ' = 0.2, max_allowed_earth_movers_score = 0.1)')
     test_dataset = test_dataset.copy(new_data)
-
-    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)
+    put_data_on_state(dataset_option.train, test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet

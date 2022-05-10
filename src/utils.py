@@ -1,13 +1,13 @@
 from contextlib import contextmanager
 from threading import current_thread
-from typing import Optional, Tuple
 
 import numpy as np
+import pandas as pd
 import streamlit as st
 from deepchecks import BaseCheck, TrainTestBaseCheck
-from deepchecks.tabular import Dataset
 from streamlit.scriptrunner.script_run_context import SCRIPT_RUN_CONTEXT_ATTR_NAME
 
+from constants import DATA_STATE_ID
 from datasets import DatasetOption
 
 
@@ -87,13 +87,21 @@ def prepare_properties_string(properties: dict):
     return ', '.join([f'{k}={quote_params(v)}' for k, v in properties.items()]) if properties else ''
 
 
-def add_download_button(dataset_tuple: Tuple[Dataset, Optional[Dataset]]):
-    if len(dataset_tuple) == 1:
-        st.download_button('Download Data', data=dataset_tuple[0].data.to_csv(), file_name='data.csv',
-                           on_click=lambda: st.balloons())
+def put_data_on_state(*datasets):
+    data_frames = [d.data for d in datasets]
+    st.session_state[DATA_STATE_ID] = data_frames
+
+
+def add_download_button():
+    if DATA_STATE_ID not in st.session_state:
+        return
+    data_frames = st.session_state[DATA_STATE_ID]
+    if len(data_frames) == 1:
+        st.download_button('Download Data', data=data_frames[0].to_csv().encode('utf-8'), file_name='data.csv',
+                           mime="text/csv", on_click=lambda: st.balloons())
     else:
-        st.download_button('Download Train Data', data=dataset_tuple[0].data.to_csv(), file_name='train.csv')
-        st.download_button('Download Test Data', data=dataset_tuple[1].data.to_csv(), file_name='test.csv')
+        st.download_button('Download Train Data', data=data_frames[0].to_csv().encode('utf-8'), file_name='train.csv', mime="text/csv")
+        st.download_button('Download Test Data', data=data_frames[1].to_csv().encode('utf-8'), file_name='test.csv', mime="text/csv")
 
 
 def get_query_param(param_name: str):
@@ -129,5 +137,6 @@ def st_redirect(src, dst):
 
 
 def std_without_outliers(data, outlier_threshold=0.025):
-    data = data.where((data < np.quantile(data, 1 - outlier_threshold)) & (data > np.percentile(data, outlier_threshold)))
+    data = data.to_numpy() if isinstance(data, pd.Series) else data
+    data = data[np.where((data < np.quantile(data, 1 - outlier_threshold)) & (data > np.percentile(data, outlier_threshold)))]
     return np.std(data)

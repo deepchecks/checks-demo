@@ -4,7 +4,7 @@ from deepchecks.tabular.checks import DataDuplicates
 
 from corruptions import insert_duplicates
 from datasets import DatasetOption
-from utils import build_snippet
+from utils import build_snippet, put_data_on_state
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
@@ -21,4 +21,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     check = DataDuplicates().add_condition_ratio_not_greater_than(0.1)
     snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_not_greater_than(0.1)')
-    return check.run(dataset), snippet, (dataset,)
+    put_data_on_state(dataset)
+    return check.run(dataset), snippet

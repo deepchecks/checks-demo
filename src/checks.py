@@ -12,7 +12,7 @@ import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
     run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
-from constants import NO_CHECK_SELECTED, CHECK_STATE_ID
+from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, DATA_STATE_ID
 from datasets import get_dataset_options
 
 
@@ -72,7 +72,10 @@ def show_checks_page():
         return
 
     # ========= Create the page layout =========
-    st.header('Inject a Corruption and See What Deepchecks Would Find')
+    st.markdown('# Inject a Corruption and See What Deepchecks Would Find \n'
+                '\* This demo focuses on individual checks. To get a feel for test suites, we recommend running the example from the '
+                '[Quickstart](https://docs.deepchecks.com/stable/auto_tutorials/tabular/plot_quickstart_in_5_minutes.html) on your environment.')
+
     result_col, snippet_col = st.columns([2, 1])
 
     # select a dataset
@@ -82,7 +85,7 @@ def show_checks_page():
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
     dataset = datasets[dataset_name]
 
-    st.sidebar.subheader('Check Parameters')
+    st.sidebar.subheader('Check\'s Parameters')
     check_params_col = st.sidebar.container()
     st.sidebar.subheader('Add Corruption')
     manipulate_col = st.sidebar.container()
@@ -90,7 +93,7 @@ def show_checks_page():
     with st.spinner('Running check'):
         check_opt = name_to_check_opt[selected_check]
         check_run = check_opt['run_function']
-        check_result, snippet, dataset_tuple = check_run(dataset, check_params_col, manipulate_col)
+        check_result, snippet = check_run(dataset, check_params_col, manipulate_col)
         string_io = io.StringIO()
         check_result.save_as_html(string_io)
         result_html = string_io.getvalue()
@@ -100,7 +103,7 @@ def show_checks_page():
         st.subheader('Run this example in your own environment')
         st.markdown('In order to run the snippet, download the data and change the paths accordingly. '
                     'The data you download will correspond to the latest corruptions applied.')
-        add_download_button(dataset_tuple)
+        add_download_button()
         st.code(snippet, language='python')
         if result_value is not None:
             with st.expander('print(result.value)'):
@@ -110,11 +113,12 @@ def show_checks_page():
                     st.json(result_value)
                 else:
                     st.code(str(result_value), language='python')
+        data_state = st.session_state[DATA_STATE_ID]
         with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
-            dataset_name = 'dataset' if len(dataset_tuple) == 1 else 'test dataset'
+            dataset_name = 'dataset' if len(data_state) == 1 else 'test dataset'
             st.markdown(f'Showing the first 5 rows of the {dataset_name}')
             # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
-            st.dataframe(dataset_tuple[-1].data.head(5))
+            st.dataframe(data_state[-1].head(5))
         with st.expander(f'Documentation of the Check (docstring)'):
             check_class = check_opt['class_var']
             docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, check_class.__name__)

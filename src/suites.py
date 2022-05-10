@@ -16,7 +16,7 @@ from corruptions import insert_numerical_drift, insert_categorical_drift, relate
     insert_duplicates
 from datasets import get_dataset_options, DatasetOption
 from streamlit_persist import persist
-from utils import st_redirect, add_download_button, build_suite_snippet
+from utils import st_redirect, add_download_button, build_suite_snippet, std_without_outliers
 
 suites = {
     'Single Dataset Integrity Suite': {'suite': single_dataset_integrity, 'is_train_test': False},
@@ -158,8 +158,9 @@ def add_corruptions_to_test(dataset_opt: DatasetOption, columns, corruptions_con
         for feature in columns['drift']:
             col = corrupt_data[feature].to_numpy()
             if feature in dataset_opt.test.numerical_features:
-                mean = np.mean(col) * drift_power
-                std = np.std(col) * drift_power
+                col_std = std_without_outliers(col)
+                mean = col_std * drift_power
+                std = col_std * drift_power
                 corrupt_data[feature] = insert_numerical_drift(col, mean, std)
             elif feature in dataset_opt.test.cat_features:
                 random_value = np.random.choice(col)

@@ -4,7 +4,7 @@ from deepchecks.tabular.checks import SingleFeatureContributionTrainTest
 
 from corruptions import relate_column_to_label
 from datasets import DatasetOption
-from utils import build_snippet
+from utils import build_snippet, put_data_on_state
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
@@ -25,4 +25,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = SingleFeatureContributionTrainTest().add_condition_feature_pps_in_train_not_greater_than(0.7)
     snippet = build_snippet(check, dataset_option,
                             condition_name='add_condition_feature_pps_in_train_not_greater_than(0.7)')
-    return check.run(dataset_option.train, test_dataset), snippet, (dataset_option.train, test_dataset)
+    put_data_on_state(dataset_option.train, test_dataset)
+    return check.run(dataset_option.train, test_dataset), snippet
