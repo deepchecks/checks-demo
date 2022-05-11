@@ -2,12 +2,13 @@ import streamlit as st
 from deepchecks.tabular.checks import SimpleModelComparison
 
 from datasets import DatasetOption
+from streamlit_persist import persist
 from utils import build_snippet, put_data_on_state
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     with check_param_col:
-        model_type = st.selectbox('Simple Model Type', ['tree', 'random', 'constant'])
+        model_type = st.selectbox('Simple Model Type', ['tree', 'random', 'constant'], key=persist('simple_model_type'))
     check = SimpleModelComparison(simple_model_type=model_type).add_condition_gain_not_less_than(0.1)
     snippet = build_snippet(check, dataset_option, properties={'simple_model_type': model_type}, model=True,
                             condition_name='add_condition_gain_not_less_than(0.1)')

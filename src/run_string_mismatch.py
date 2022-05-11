@@ -4,6 +4,7 @@ from deepchecks.tabular.checks import StringMismatch
 
 from corruptions import insert_variants
 from datasets import DatasetOption
+from streamlit_persist import persist
 from utils import build_snippet, put_data_on_state
 
 
@@ -20,7 +21,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
 
     with manipulate_col:
         st.subheader('Add Corruption to Data')
-        percent = st.slider('Variants Percent', value=10, min_value=0, max_value=100, step=1)
+        percent = st.slider('Variants Percent', value=10, min_value=0, max_value=100, step=1, key=persist('string_mismatch_percent'))
         if percent > 0:
             new_data[column] = insert_variants(new_data[column], percent)
 

@@ -130,7 +130,6 @@ def show_checks_page():
         with result_col:
             components.html(html, height=height_px)
 
-    st.sidebar.button('click here')
     footnote = """
     <br><br>
     **Note**: 

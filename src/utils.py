@@ -141,5 +141,7 @@ def st_redirect(src, dst):
 
 def std_without_outliers(data, outlier_threshold=0.025):
     data = data.to_numpy() if isinstance(data, pd.Series) else data
-    data = data[np.where((data < np.quantile(data, 1 - outlier_threshold)) & (data > np.percentile(data, outlier_threshold)))]
-    return np.std(data)
+    trim = int(outlier_threshold * data.size)
+    if trim > 0:
+        data = data[trim:-trim]
+    return float(np.std(data))

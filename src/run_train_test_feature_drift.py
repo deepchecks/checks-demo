@@ -25,8 +25,8 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         if column in test_dataset.numerical_features:
             col_std = std_without_outliers(new_data[column])
             st.text('Add gaussian noise')
-            mean = st.slider('Mean', min_value=0.0, max_value=col_std * 5, step=col_std / 20)
-            std = st.slider('Std', min_value=0.0, max_value=col_std * 5, step=col_std / 20)
+            mean = st.slider('Mean', min_value=0.0, max_value=col_std * 5, step=col_std / 20, value=col_std / 2)
+            std = st.slider('Std', min_value=0.0, max_value=col_std * 5, step=col_std / 20, value=0.0)
 
             if mean > 0 or std > 0:
                 new_data[column] = insert_numerical_drift(new_data[column], mean, std)
