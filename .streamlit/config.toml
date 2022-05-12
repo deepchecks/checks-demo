@@ -1,3 +1,4 @@
 # Prevents dark theme from being applied to Streamlit
 [theme]
 base="light"
+primaryColor  = '#5718B8'

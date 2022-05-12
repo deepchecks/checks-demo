@@ -12,12 +12,14 @@ import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
     run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
+from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, DATA_STATE_ID
 from datasets import get_dataset_options
 
 
 __all__ = ['show_checks_page']
 
 from encoder import AppEncoder
+from streamlit_persist import persist
 from utils import add_download_button
 
 
@@ -46,26 +48,6 @@ def get_checks_options():
     ]
 
 
-def update_query_param():
-    # Set in the query params the selected check
-    st.experimental_set_query_params(check=st.session_state.check_select)
-
-
-START_PAGE_MD = """
-# Welcome to Deepchecks' Interactive Checks Demo 🚀
-
-In this demo you can play with some of the existing checks and see how they work on various datasets. <br/>
-Each check enables custom corruptions to the dataset to showcase its value. 
-
-If you like what we're doing at Deepchecks, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks).<br/>
-And if you'd like to dive in a bit more, check out our [documentation](https://docs.deepchecks.com/stable/).
-
-### ⬅️ To start select a check on the left sidebar
-
-![](https://docs.deepchecks.com/stable/_images/checks_and_conditions.png)
-"""
-
-
 def show_checks_page():
     TEMPLATE_WRAPPER = """
     <div style="height:{height}px;overflow-y:auto;position:relative;">
@@ -79,49 +61,39 @@ def show_checks_page():
     name_to_check_opt = {f'{check_opt["class_var"].name()} ({check_opt["type"]})': check_opt
                          for index, check_opt in enumerate(checks)}
     # Add default option of no check selected
-    NO_CHECK_SELECTED = 'No check selected'
     check_options_names = [NO_CHECK_SELECTED] + list(name_to_check_opt.keys())
 
-    query_params = st.experimental_get_query_params()
-    # Get selected check from query params if exists
-    if 'check' in query_params:
-        start_check = query_params['check'][0]
-    # Set default query params if not exists
-    else:
-        st.experimental_set_query_params(check=NO_CHECK_SELECTED)
-        start_check = NO_CHECK_SELECTED
-
     # select a check
-    selected_check = st.sidebar.selectbox('Select a check', check_options_names, key='check_select',
-                                          index=check_options_names.index(start_check),
-                                          on_change=update_query_param)
-    st.sidebar.markdown('Those are just a few of all the checks deepchecks offers, see '
-                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html)',
+    selected_check = st.sidebar.selectbox('Select a check', check_options_names, key=persist(CHECK_STATE_ID))
+    st.sidebar.markdown('These are just a few of the checks deepchecks offers, full list in the '
+                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html?utm_campaign=gallery_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)',
                         unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:
-        st.markdown(START_PAGE_MD, unsafe_allow_html=True)
         return
 
     # ========= Create the page layout =========
-    st.header('Inject a Corruption and See What Deepchecks Would Find')
+    st.markdown('# Inject a Corruption and See What Deepchecks Would Find \n'
+                '\* This demo focuses on individual checks. To get a feel for test suites, we recommend running the example from the '
+                '[Quickstart](https://docs.deepchecks.com/stable/auto_tutorials/tabular/plot_quickstart_in_5_minutes.html?utm_campaign=quickstart_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)'
+                ' on your environment.')
+
     result_col, snippet_col = st.columns([2, 1])
 
     # select a dataset
     # For check "string mismatch" we need only datasets that contains categorical features
     if StringMismatch.name() in selected_check:
-        datasets = {name: dataset for name, dataset in datasets.items() if dataset['contain_categorical_columns']}
+        datasets = {name: dataset for name, dataset in datasets.items() if dataset.contain_categorical_columns}
     dataset_name = st.sidebar.selectbox('Select a dataset', datasets.keys())
     dataset = datasets[dataset_name]
 
-    st.sidebar.subheader('Check Parameters')
+    st.sidebar.subheader('Check\'s Parameters')
     check_params_col = st.sidebar.container()
-    st.sidebar.subheader('Add Corruption')
     manipulate_col = st.sidebar.container()
     # Run the check
     with st.spinner('Running check'):
         check_opt = name_to_check_opt[selected_check]
         check_run = check_opt['run_function']
-        check_result, snippet, dataset_tuple = check_run(dataset, check_params_col, manipulate_col)
+        check_result, snippet = check_run(dataset, check_params_col, manipulate_col)
         string_io = io.StringIO()
         check_result.save_as_html(string_io)
         result_html = string_io.getvalue()
@@ -131,7 +103,7 @@ def show_checks_page():
         st.subheader('Run this example in your own environment')
         st.markdown('In order to run the snippet, download the data and change the paths accordingly. '
                     'The data you download will correspond to the latest corruptions applied.')
-        add_download_button(dataset_tuple)
+        add_download_button()
         st.code(snippet, language='python')
         if result_value is not None:
             with st.expander('print(result.value)'):
@@ -141,11 +113,10 @@ def show_checks_page():
                     st.json(result_value)
                 else:
                     st.code(str(result_value), language='python')
+        data_state = st.session_state[DATA_STATE_ID]
         with st.expander(f'Dataset "{dataset_name}" Head', expanded=True):
-            dataset_name = 'dataset' if len(dataset_tuple) == 1 else 'test dataset'
-            st.markdown(f'Showing the first 5 rows of the {dataset_name}')
-            # If we have single dataset show it, if we have 2 datasets show the last one which is test dataset
-            st.dataframe(dataset_tuple[-1].data.head(5))
+            st.markdown(f'Showing the first 5 rows of the {data_state["dataset_type"]}')
+            st.dataframe(data_state['data'][data_state['corrupted_dataset_index']].head(5))
         with st.expander(f'Documentation of the Check (docstring)'):
             check_class = check_opt['class_var']
             docs_md = npdoc_to_md.render_md_from_obj_docstring(check_class, check_class.__name__)
@@ -161,11 +132,10 @@ def show_checks_page():
 
     footnote = """
     <br><br>
-    **Notes**: 
-    1. For checks that involve 2 datasets, corruption is applied to the test set.
-    2. Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
+    **Note**: 
+    Due to limitations of Streamlit, some checks may be cropped on small screens. In this case, please run the check on your own environment using the code on the right.
     <br><br>
     If you liked this, please ⭐&nbsp;us on [GitHub](https://github.com/deepchecks/deepchecks)<br>
-    For more info, check out our [docs](https://docs.deepchecks.com/stable/)
+    For more info, check out our [docs](https://docs.deepchecks.com/stable?utm_campaign=docs_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)
     """
     st.sidebar.markdown(footnote, unsafe_allow_html=True)

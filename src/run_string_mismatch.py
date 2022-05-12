@@ -1,17 +1,15 @@
-import random
-
-import numpy as np
-import pandas as pd
 import streamlit as st
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import StringMismatch
 
+from corruptions import insert_variants
 from datasets import DatasetOption
-from utils import build_snippet
+from streamlit_persist import persist
+from utils import build_snippet, put_data_on_state
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    dataset: Dataset = dataset_option['train']
+    dataset: Dataset = dataset_option.train
     new_data = dataset.data.copy()
 
     if not dataset.cat_features:
@@ -22,7 +20,8 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         column: str = st.selectbox('Select a column', dataset.cat_features)
 
     with manipulate_col:
-        percent = st.slider('Variants Percent', value=10, min_value=0, max_value=100, step=1)
+        st.subheader('Add Corruption to Data')
+        percent = st.slider('Variants Percent', value=10, min_value=0, max_value=100, step=1, key=persist('string_mismatch_percent'))
         if percent > 0:
             new_data[column] = insert_variants(new_data[column], percent)
 
@@ -30,33 +29,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than(0.01)',
                             properties={'columns': [column]})
     dataset = dataset.copy(new_data)
-
-    return check.run(dataset), snippet, (dataset,)
-
-
-def insert_variants(column: pd.Series, percent):
-    column = column.to_numpy()
-    value = np.random.choice(column)
-    variants = random_variants(value)
-    size = min(int(len(column) * percent / 100), len(column))
-    indices_to_replace = np.random.choice(len(column), size=size, replace=False)
-    for index in indices_to_replace:
-        column[index] = random.choice(variants)
-    return column
-
-
-def flip_case(value):
-    return value.upper() if value.islower() else value.lower()
-
-
-def random_variants(value):
-    functions = [
-        lambda x: flip_case(x[0]) + x[1:],  # Switch upper lower first letter
-        lambda x: x.replace(' ', '-'),  # Replace space with -
-        lambda x: x + '.',  # Add . at the end
-        lambda x: x.upper(),  # Upper case all letters
-        lambda x: x.lower(),  # Lower case all letters
-        lambda x: ' ' + x,  # Add space at the beginning
-    ]
-
-    return [f(value) for f in functions if f(value) != value]
+    put_data_on_state(dataset)
+    return check.run(dataset), snippet

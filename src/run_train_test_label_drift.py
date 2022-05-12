@@ -6,24 +6,25 @@ from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import TrainTestLabelDrift
 
 from datasets import DatasetOption
-from utils import insert_categorical_drift, insert_numerical_drift, build_snippet
+from utils import build_snippet, std_without_outliers, put_data_on_state
+from corruptions import insert_numerical_drift, insert_categorical_drift
 
 
 def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
-    test_dataset: Dataset = dataset_option['test']
+    test_dataset: Dataset = dataset_option.test
     new_data = test_dataset.data.copy()
     label_name = test_dataset.label_name
 
     with check_param_col:
         st.text('No parameters to control')
     with manipulate_col:
+        st.subheader('Add Corruption to Test Data')
         # Allow numeric drift
         if test_dataset.label_type == 'regression_label':
-            max_mean = np.mean(new_data[label_name]) * 3
-            max_std = np.std(new_data[label_name]) * 3
+            col_std = std_without_outliers(new_data[label_name])
             st.text('Add gaussian noise')
-            mean = st.slider('Mean', min_value=0.0, max_value=max_mean, step=0.1)
-            std = st.slider('Std', min_value=0.0, max_value=max_std, step=0.1)
+            mean = st.slider('Mean', min_value=0.0, max_value=col_std * 5, step=col_std / 20, value=col_std / 2)
+            std = st.slider('Std', min_value=0.0, max_value=col_std * 5, step=col_std / 20, value=0.0)
 
             if mean > 0 or std > 0:
                 new_data[label_name] = insert_numerical_drift(new_data[label_name], mean, std)
@@ -43,5 +44,5 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
                             condition_name='add_condition_drift_score_not_greater_than(max_allowed_psi_score'
                                            ' = 0.2, max_allowed_earth_movers_score = 0.1)')
     test_dataset = test_dataset.copy(new_data)
-
-    return check.run(dataset_option['train'], test_dataset), snippet, (dataset_option['train'], test_dataset)
+    put_data_on_state(dataset_option.train, test_dataset, dataset_type='test', corrupted_dataset_index=1)
+    return check.run(dataset_option.train, test_dataset), snippet
