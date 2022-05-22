@@ -71,5 +71,5 @@ if (mode == 'Suite' and st.session_state.get(SUITE_STATE_ID) == NO_SUITE_SELECTE
     
     ### ⬅️ Start by selecting a check in the menu
     
-    ![](https://docs.deepchecks.com/stable/_images/checks_and_conditions.png)
+    ![](https://docs.deepchecks.com/stable/_images/general/checks-and-conditions.png)
     """, unsafe_allow_html=True)
