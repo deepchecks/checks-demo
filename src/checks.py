@@ -4,10 +4,10 @@ from typing import Sequence, TypedDict, Callable, Any
 
 import npdoc_to_md
 import streamlit as st
-from deepchecks.tabular.checks import SimpleModelComparison, SingleFeatureContributionTrainTest
-from deepchecks.tabular.checks.distribution import TrainTestFeatureDrift, TrainTestLabelDrift
-from deepchecks.tabular.checks.integrity import StringMismatch, DataDuplicates
-from deepchecks.tabular.checks.performance import SegmentPerformance
+from deepchecks.tabular.checks import SimpleModelComparison, FeatureLabelCorrelation
+from deepchecks.tabular.checks import TrainTestFeatureDrift, TrainTestLabelDrift
+from deepchecks.tabular.checks import StringMismatch, DataDuplicates
+from deepchecks.tabular.checks import SegmentPerformance
 import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
@@ -43,7 +43,7 @@ def get_checks_options():
                     run_function=run_segment_performance.run),
         CheckOption(type='performance', class_var=SimpleModelComparison,
                     run_function=run_simple_model_comparison.run),
-        CheckOption(type='methodology', class_var=SingleFeatureContributionTrainTest,
+        CheckOption(type='methodology', class_var=FeatureLabelCorrelation,
                     run_function=run_single_feature_contribution_train_test.run),
     ]
 

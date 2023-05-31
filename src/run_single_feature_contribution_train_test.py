@@ -1,6 +1,6 @@
 import streamlit as st
 from deepchecks.tabular import Dataset
-from deepchecks.tabular.checks import SingleFeatureContributionTrainTest
+from deepchecks.tabular.checks import FeatureLabelCorrelation
 
 from corruptions import relate_column_to_label
 from datasets import DatasetOption
@@ -24,8 +24,8 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         new_data[column] = relate_column_to_label(train_dataset, new_data[column], power)
         train_dataset = train_dataset.copy(new_data)
 
-    check = SingleFeatureContributionTrainTest().add_condition_feature_pps_difference_not_greater_than(0.2)
+    check = FeatureLabelCorrelation().add_condition_feature_pps_less_than(0.2)
     snippet = build_snippet(check, dataset_option,
-                            condition_name='add_condition_feature_pps_difference_not_greater_than(0.2)')
+                            condition_name='add_condition_feature_pps_less_than(0.2)')
     put_data_on_state(train_dataset, dataset_option.test, dataset_type='train')
     return check.run(train_dataset, dataset_option.test), snippet
