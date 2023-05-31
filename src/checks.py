@@ -11,7 +11,7 @@ from deepchecks.tabular.checks import SegmentPerformance
 import streamlit.components.v1 as components
 
 import run_train_test_feature_drift, run_train_test_label_drift, run_string_mismatch, run_data_duplicates, \
-    run_segment_performance, run_simple_model_comparison, run_single_feature_contribution_train_test
+    run_segment_performance, run_simple_model_comparison, run_feature_label_correlation
 from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, DATA_STATE_ID
 from datasets import get_dataset_options
 
@@ -44,7 +44,7 @@ def get_checks_options():
         CheckOption(type='performance', class_var=SimpleModelComparison,
                     run_function=run_simple_model_comparison.run),
         CheckOption(type='methodology', class_var=FeatureLabelCorrelation,
-                    run_function=run_single_feature_contribution_train_test.run),
+                    run_function=run_feature_label_correlation.run),
     ]
 
 
@@ -66,7 +66,7 @@ def show_checks_page():
     # select a check
     selected_check = st.sidebar.selectbox('Select a check', check_options_names, key=persist(CHECK_STATE_ID))
     st.sidebar.markdown('These are just a few of the checks deepchecks offers, full list in the '
-                        '[gallery](https://docs.deepchecks.com/stable/checks_gallery/tabular/index.html?utm_campaign=gallery_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)',
+                        '[gallery](https://docs.deepchecks.com/stable/tabular/index.html#checks-gallery?utm_campaign=gallery_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)',
                         unsafe_allow_html=True)
     if selected_check == NO_CHECK_SELECTED:
         return
@@ -74,7 +74,7 @@ def show_checks_page():
     # ========= Create the page layout =========
     st.markdown('# Inject a Corruption and See What Deepchecks Would Find \n'
                 '\* This demo focuses on individual checks. To get a feel for test suites, we recommend running the example from the '
-                '[Quickstart](https://docs.deepchecks.com/stable/auto_tutorials/tabular/plot_quickstart_in_5_minutes.html?utm_campaign=quickstart_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)'
+                '[Quickstart](https://docs.deepchecks.com/stable/tabular/auto_tutorials/quickstarts/plot_quickstart_in_5_minutes.html?utm_campaign=quickstart_button&utm_medium=referral&utm_source=checks-demo.deepchecks.com)'
                 ' on your environment.')
 
     result_col, snippet_col = st.columns([2, 1])

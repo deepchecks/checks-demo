@@ -25,8 +25,8 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
         if percent > 0:
             new_data[column] = insert_variants(new_data[column], percent)
 
-    check = StringMismatch(columns=[column]).add_condition_ratio_variants_not_greater_than(0.01)
-    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_not_greater_than(0.01)',
+    check = StringMismatch(columns=[column]).add_condition_ratio_variants_less_or_equal(0.01)
+    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_variants_less_or_equal(0.01)',
                             properties={'columns': [column]})
     dataset = dataset.copy(new_data)
     put_data_on_state(dataset)

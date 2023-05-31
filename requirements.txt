@@ -1,5 +1,5 @@
 git+https://github.com/deepchecks/deepchecks.git@main#egg=deepchecks
-streamlit==1.21.0
+streamlit==1.22.0
 pillow==9.1.0
 bs4==0.0.1
 python-dotenv==0.20.0

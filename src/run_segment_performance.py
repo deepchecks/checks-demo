@@ -19,4 +19,4 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
     check = SegmentPerformance(**properties)
     snippet = build_snippet(check, dataset_option, properties=properties, model=True)
     put_data_on_state(dataset)
-    return check.run(dataset, model=dataset_option.model, features_importance=dataset_option.features_importance), snippet
+    return check.run(dataset, model=dataset_option.model, feature_importance=dataset_option.features_importance), snippet

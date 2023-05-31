@@ -39,10 +39,9 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
             if category_percent != percent_in_data:
                 new_data[label_name] = insert_categorical_drift(new_data[label_name], percent_in_data, category_to_drift)
 
-    check = TrainTestLabelDrift().add_condition_drift_score_not_greater_than()
+    check = TrainTestLabelDrift().add_condition_drift_score_less_than()
     snippet = build_snippet(check, dataset_option,
-                            condition_name='add_condition_drift_score_not_greater_than(max_allowed_psi_score'
-                                           ' = 0.2, max_allowed_earth_movers_score = 0.1)')
+                            condition_name='add_condition_drift_score_less_than(max_allowed_drift_score = 0.15)')
     test_dataset = test_dataset.copy(new_data)
     put_data_on_state(dataset_option.train, test_dataset, dataset_type='test', corrupted_dataset_index=1)
     return check.run(dataset_option.train, test_dataset), snippet

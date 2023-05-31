@@ -37,7 +37,7 @@ AVOCADO_FI = pd.Series({
 })
 
 
-@st.cache(show_spinner=False, hash_funcs={dict: lambda _: id})
+@st.cache_data(show_spinner=False)
 def get_dataset_options():
     with st.spinner('Loading datasets...'):
         sample_size = 1000

@@ -21,7 +21,7 @@ def run(dataset_option: DatasetOption, check_param_col, manipulate_col):
             new_data = insert_duplicates(dataset.data, rows_to_duplicate, percent)
             dataset = dataset.copy(new_data)
 
-    check = DataDuplicates().add_condition_ratio_not_greater_than(0.1)
-    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_not_greater_than(0.1)')
+    check = DataDuplicates().add_condition_ratio_less_or_equal(0.1)
+    snippet = build_snippet(check, dataset_option, condition_name='add_condition_ratio_less_or_equal(0.1)')
     put_data_on_state(dataset)
     return check.run(dataset), snippet
