@@ -10,7 +10,7 @@ from checks import show_checks_page
 from constants import NO_CHECK_SELECTED, CHECK_STATE_ID, CHECK_QUERY_PARAM, SUITE_QUERY_PARAM, NO_SUITE_SELECTED, \
     SUITE_STATE_ID
 from streamlit_persist import load_widget_state
-from suites import show_suites_page
+# from suites import show_suites_page
 from utils import get_query_param, set_query_param
 
 # Inject to streamlit index page analytics code and meta tags
@@ -54,7 +54,7 @@ if mode == 'Checks':
     show_checks_page()
 else:
     set_query_param(SUITE_QUERY_PARAM, SUITE_STATE_ID)
-    show_suites_page()
+    # show_suites_page()
 
 # If nothing is chosen show the open page
 if (mode == 'Suite' and st.session_state.get(SUITE_STATE_ID) == NO_SUITE_SELECTED) or \
