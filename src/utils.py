@@ -1,11 +1,7 @@
-from contextlib import contextmanager
-from threading import current_thread
-
 import numpy as np
 import pandas as pd
 import streamlit as st
 from deepchecks import BaseCheck, TrainTestBaseCheck
-from streamlit.scriptrunner.script_run_context import SCRIPT_RUN_CONTEXT_ATTR_NAME
 
 from constants import DATA_STATE_ID
 from datasets import DatasetOption
@@ -119,24 +115,24 @@ def set_query_param(param_name: str, state_id):
     st.experimental_set_query_params(**{param_name: st.session_state[state_id]})
 
 
-@contextmanager
-def st_redirect(src, dst):
-    placeholder = st.empty()
-    output_func = getattr(placeholder, dst)
-    old_write = src.write
-
-    def new_write(b):
-        if getattr(current_thread(), SCRIPT_RUN_CONTEXT_ATTR_NAME, None):
-            output_func(b)
-        else:
-            old_write(b)
-
-    try:
-        src.write = new_write
-        yield
-    finally:
-        src.write = old_write
-        placeholder.empty()
+# @contextmanager
+# def st_redirect(src, dst):
+#     placeholder = st.empty()
+#     output_func = getattr(placeholder, dst)
+#     old_write = src.write
+#
+#     def new_write(b):
+#         if getattr(current_thread(), SCRIPT_RUN_CONTEXT_ATTR_NAME, None):
+#             output_func(b)
+#         else:
+#             old_write(b)
+#
+#     try:
+#         src.write = new_write
+#         yield
+#     finally:
+#         src.write = old_write
+#         placeholder.empty()
 
 
 def std_without_outliers(data, outlier_threshold=0.025):
